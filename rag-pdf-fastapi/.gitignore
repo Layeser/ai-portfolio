@@ -1,0 +1,14 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pkl
+*.index
+*.faiss
+.DS_Store
+.idea/
+.vscode/
+data/chunks.pkl
+data/*.index
+data/*.faiss
+!data/sample.pdf
