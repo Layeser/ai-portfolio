@@ -18,3 +18,9 @@ texts/
 .DS_Store
 .idea/
 .vscode/
+
+artifacts/
+*.egg-info/
+.pytest_cache/
+
+release/

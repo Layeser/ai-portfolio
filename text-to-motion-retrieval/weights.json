@@ -1,0 +1,14 @@
+{
+  "backend": "github",
+  "github": {
+    "repo": "Layeser/ai-portfolio",
+    "tag": "t2m-weights-v1",
+    "title": "Text-to-motion dual encoder weights"
+  },
+  "files": {
+    "dual_encoder.pt": "artifacts/dual_encoder.pt",
+    "normalizer.npz": "artifacts/normalizer.npz",
+    "split.json": "artifacts/split.json",
+    "metrics.json": "artifacts/metrics.json"
+  }
+}
