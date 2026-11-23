@@ -1,0 +1,13 @@
+# Online learning to rank with cascading bandits: simulator, UCB / KL-UCB / Thompson policies, benchmark and a serving API.
+# Install into the shared venv:  pip install -r requirements.txt
+
+numpy>=1.26
+matplotlib>=3.8
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+
+# dev
+pytest>=8
+httpx>=0.27
+ruff>=0.5

@@ -1,0 +1,72 @@
+{
+  "config": {
+    "horizon": 20000,
+    "seeds": 10,
+    "items": 100,
+    "k": 5
+  },
+  "stationary": {
+    "Random": {
+      "final_regret": 8947.7,
+      "final_ctr": 0.2164,
+      "share_of_optimal_ctr": 0.328
+    },
+    "ε-greedy (ε=0.05)": {
+      "final_regret": 945.0,
+      "final_ctr": 0.6277,
+      "share_of_optimal_ctr": 0.95
+    },
+    "CascadeUCB1": {
+      "final_regret": 3396.0,
+      "final_ctr": 0.5781,
+      "share_of_optimal_ctr": 0.875
+    },
+    "CascadeKL-UCB": {
+      "final_regret": 983.7,
+      "final_ctr": 0.6479,
+      "share_of_optimal_ctr": 0.981
+    },
+    "Cascade Thompson": {
+      "final_regret": 718.1,
+      "final_ctr": 0.6563,
+      "share_of_optimal_ctr": 0.993
+    },
+    "Discounted Thompson (γ=0.999)": {
+      "final_regret": 3563.2,
+      "final_ctr": 0.4965,
+      "share_of_optimal_ctr": 0.751
+    }
+  },
+  "popularity_shift": {
+    "Random": {
+      "final_regret": 8948.6,
+      "final_ctr": 0.2104,
+      "share_of_optimal_ctr": 0.319
+    },
+    "ε-greedy (ε=0.05)": {
+      "final_regret": 1428.5,
+      "final_ctr": 0.5974,
+      "share_of_optimal_ctr": 0.904
+    },
+    "CascadeUCB1": {
+      "final_regret": 3463.7,
+      "final_ctr": 0.5708,
+      "share_of_optimal_ctr": 0.863
+    },
+    "CascadeKL-UCB": {
+      "final_regret": 1164.9,
+      "final_ctr": 0.6377,
+      "share_of_optimal_ctr": 0.965
+    },
+    "Cascade Thompson": {
+      "final_regret": 1039.2,
+      "final_ctr": 0.6332,
+      "share_of_optimal_ctr": 0.958
+    },
+    "Discounted Thompson (γ=0.999)": {
+      "final_regret": 3570.1,
+      "final_ctr": 0.4962,
+      "share_of_optimal_ctr": 0.751
+    }
+  }
+}
