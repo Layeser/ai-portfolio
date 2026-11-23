@@ -1,0 +1,82 @@
+{
+  "model": "xlmr",
+  "valid": {
+    "accuracy": 0.8126,
+    "f1_macro": 0.7268,
+    "hP": 0.8956,
+    "hR": 0.904,
+    "hF1": 0.8998,
+    "level_accuracy": {
+      "level_1": 0.9731,
+      "level_2": 0.9512,
+      "level_3": 0.8729,
+      "level_4": 0.8329
+    }
+  },
+  "test": {
+    "accuracy": 0.8071,
+    "f1_macro": 0.724,
+    "hP": 0.8942,
+    "hR": 0.9018,
+    "hF1": 0.898,
+    "level_accuracy": {
+      "level_1": 0.971,
+      "level_2": 0.9498,
+      "level_3": 0.873,
+      "level_4": 0.8298
+    },
+    "auto": {
+      "threshold": 0.7072,
+      "coverage": 0.6869,
+      "accuracy_on_auto": 0.938
+    }
+  },
+  "test_dedup": {
+    "accuracy": 0.8079,
+    "f1_macro": 0.7244,
+    "hP": 0.8951,
+    "hR": 0.9024,
+    "hF1": 0.8987,
+    "level_accuracy": {
+      "level_1": 0.9712,
+      "level_2": 0.9505,
+      "level_3": 0.8735,
+      "level_4": 0.8307
+    },
+    "auto": {
+      "threshold": 0.7072,
+      "coverage": 0.6879,
+      "accuracy_on_auto": 0.9376
+    }
+  },
+  "leakage": {
+    "test_rows_with_title_seen_in_train": 131,
+    "share": 0.0172
+  },
+  "auto_accuracy_target": 0.95,
+  "rows": {
+    "fit": 27468,
+    "valid": 3052,
+    "test": 7631
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 2.5621,
+      "minutes": 15.3,
+      "valid_accuracy": 0.7156
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.0293,
+      "minutes": 32.6,
+      "valid_accuracy": 0.7913
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.7437,
+      "minutes": 20.5,
+      "valid_accuracy": 0.8126
+    }
+  ]
+}

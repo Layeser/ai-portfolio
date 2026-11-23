@@ -1,0 +1,164 @@
+{
+  "tfidf": {
+    "model": "tfidf",
+    "valid": {
+      "accuracy": 0.8686,
+      "f1_macro": 0.842,
+      "hP": 0.9293,
+      "hR": 0.9304,
+      "hF1": 0.9298,
+      "level_accuracy": {
+        "level_1": 0.9761,
+        "level_2": 0.9663,
+        "level_3": 0.9119,
+        "level_4": 0.8801
+      }
+    },
+    "test": {
+      "accuracy": 0.8691,
+      "f1_macro": 0.8391,
+      "hP": 0.9303,
+      "hR": 0.9335,
+      "hF1": 0.9319,
+      "level_accuracy": {
+        "level_1": 0.9756,
+        "level_2": 0.9651,
+        "level_3": 0.9151,
+        "level_4": 0.8852
+      },
+      "auto": {
+        "threshold": 0.6067,
+        "coverage": 0.824,
+        "accuracy_on_auto": 0.9462
+      }
+    },
+    "test_dedup": {
+      "accuracy": 0.8693,
+      "f1_macro": 0.8382,
+      "hP": 0.9306,
+      "hR": 0.9337,
+      "hF1": 0.9321,
+      "level_accuracy": {
+        "level_1": 0.9755,
+        "level_2": 0.9651,
+        "level_3": 0.9149,
+        "level_4": 0.8856
+      },
+      "auto": {
+        "threshold": 0.6067,
+        "coverage": 0.8244,
+        "accuracy_on_auto": 0.946
+      }
+    },
+    "leakage": {
+      "test_rows_with_title_seen_in_train": 131,
+      "share": 0.0172
+    },
+    "auto_accuracy_target": 0.95,
+    "rows": {
+      "fit": 27468,
+      "valid": 3052,
+      "test": 7631
+    }
+  },
+  "xlmr": {
+    "model": "xlmr",
+    "valid": {
+      "accuracy": 0.8601,
+      "f1_macro": 0.8245,
+      "hP": 0.9284,
+      "hR": 0.9293,
+      "hF1": 0.9289,
+      "level_accuracy": {
+        "level_1": 0.978,
+        "level_2": 0.9669,
+        "level_3": 0.9033,
+        "level_4": 0.8745
+      }
+    },
+    "test": {
+      "accuracy": 0.849,
+      "f1_macro": 0.8062,
+      "hP": 0.9202,
+      "hR": 0.9221,
+      "hF1": 0.9212,
+      "level_accuracy": {
+        "level_1": 0.9755,
+        "level_2": 0.9604,
+        "level_3": 0.8987,
+        "level_4": 0.8657
+      },
+      "auto": {
+        "threshold": 0.8792,
+        "coverage": 0.7926,
+        "accuracy_on_auto": 0.9448
+      }
+    },
+    "test_dedup": {
+      "accuracy": 0.8492,
+      "f1_macro": 0.8059,
+      "hP": 0.9208,
+      "hR": 0.9226,
+      "hF1": 0.9217,
+      "level_accuracy": {
+        "level_1": 0.9757,
+        "level_2": 0.9607,
+        "level_3": 0.8989,
+        "level_4": 0.8661
+      },
+      "auto": {
+        "threshold": 0.8792,
+        "coverage": 0.7931,
+        "accuracy_on_auto": 0.9447
+      }
+    },
+    "leakage": {
+      "test_rows_with_title_seen_in_train": 131,
+      "share": 0.0172
+    },
+    "auto_accuracy_target": 0.95,
+    "rows": {
+      "fit": 27468,
+      "valid": 3052,
+      "test": 7631
+    },
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 2.4084,
+        "minutes": 9.4,
+        "valid_accuracy": 0.7353
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.8764,
+        "minutes": 8.1,
+        "valid_accuracy": 0.8103
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.6043,
+        "minutes": 7.9,
+        "valid_accuracy": 0.8372
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.4393,
+        "minutes": 9.8,
+        "valid_accuracy": 0.8417
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.3196,
+        "minutes": 8.1,
+        "valid_accuracy": 0.8529
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.2335,
+        "minutes": 8.7,
+        "valid_accuracy": 0.8601
+      }
+    ]
+  }
+}

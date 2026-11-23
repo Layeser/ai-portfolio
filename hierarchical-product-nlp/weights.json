@@ -1,0 +1,10 @@
+{
+  "backend": "huggingface",
+  "repo_id": "Layeser/prodcat-models",
+  "private": true,
+  "files": {
+    "tfidf/tfidf.joblib": "artifacts/tfidf/tfidf.joblib",
+    "tfidf/threshold.json": "artifacts/tfidf/threshold.json",
+    "tfidf/metrics.json": "artifacts/tfidf/metrics.json"
+  }
+}
