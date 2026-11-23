@@ -1,0 +1,18 @@
+# Image similarity search: pixels+PCA vs autoencoder vs SimCLR vs ImageNet transfer, FAISS index, search API.
+# Install into the shared venv:  pip install -r requirements.txt
+
+numpy>=1.26
+torch>=2.2
+torchvision>=0.17
+scikit-learn>=1.4
+faiss-cpu>=1.8
+matplotlib>=3.8
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+pillow>=10
+
+# dev
+pytest>=8
+httpx>=0.27
+ruff>=0.5

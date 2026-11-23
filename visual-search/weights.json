@@ -1,0 +1,13 @@
+{
+  "backend": "github",
+  "github": {
+    "repo": "Layeser/ai-portfolio",
+    "tag": "vsearch-weights-v1",
+    "title": "Visual search: SimCLR encoder and gallery embeddings"
+  },
+  "files": {
+    "simclr.pt": "artifacts/simclr.pt",
+    "gallery_simclr.npy": "artifacts/gallery_simclr.npy",
+    "gallery_imagenet.npy": "artifacts/gallery_imagenet.npy"
+  }
+}

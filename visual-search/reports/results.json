@@ -1,0 +1,38 @@
+{
+  "pixels_pca": {
+    "P@10": 0.3384,
+    "mAP@10": 0.4912,
+    "kNN_accuracy": 0.4468,
+    "linear_probe": 0.4014,
+    "dim": 128,
+    "fit_minutes": 1.3,
+    "search_ms_per_query": 0.286
+  },
+  "autoencoder": {
+    "P@10": 0.3487,
+    "mAP@10": 0.5042,
+    "kNN_accuracy": 0.455,
+    "linear_probe": 0.4074,
+    "dim": 256,
+    "fit_minutes": 1.4,
+    "search_ms_per_query": 0.084
+  },
+  "imagenet": {
+    "P@10": 0.7664,
+    "mAP@10": 0.8337,
+    "kNN_accuracy": 0.8515,
+    "linear_probe": 0.8675,
+    "dim": 512,
+    "fit_minutes": 0.0,
+    "search_ms_per_query": 0.177
+  },
+  "simclr": {
+    "P@10": 0.6757,
+    "mAP@10": 0.7508,
+    "kNN_accuracy": 0.7561,
+    "linear_probe": 0.791,
+    "dim": 512,
+    "fit_minutes": 25.9,
+    "search_ms_per_query": 0.15
+  }
+}
