@@ -1,0 +1,53 @@
+# Monorepo CI: GitHub only runs workflows from the repository root, so every project is tested here
+# (each project also keeps its own workflow for when it is split into a standalone repository).
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: fraud-detection-platform
+            install: pip install -r requirements.txt
+            test: pytest -q -m "not llm"
+          - project: enterprise-rag-assistant
+            install: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+            test: pytest -q
+          - project: hierarchical-product-nlp
+            install: pip install -r requirements.txt
+            test: pytest -q
+          - project: text-to-motion-retrieval
+            install: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+            test: pytest -q
+          - project: visual-search
+            install: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+            test: pytest -q
+          - project: ranking-bandits
+            install: pip install -r requirements.txt
+            test: pytest -q
+          - project: yolo-from-scratch
+            install: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt pytest
+            test: pytest -q
+          - project: ml-from-scratch
+            install: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+            test: pytest -q
+          - project: langchain-tool-agents
+            install: pip install -r requirements.txt
+            test: pytest -q
+    defaults:
+      run:
+        working-directory: ${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: ${{ matrix.install }}
+      - run: ${{ matrix.test }}

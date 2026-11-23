@@ -1,0 +1,15 @@
+# Shared lint config for every project (run `ruff check .` from the repository root).
+line-length = 120
+target-version = "py311"
+extend-exclude = ["*.ipynb", "brainback", "spiking-transformers"]
+
+[lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]  # long strings and URLs; the formatter handles code width
+
+[lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.File", "fastapi.Query", "fastapi.Depends"]
+
+[lint.per-file-ignores]
+# YOLO scripts are run directly (python train.py) and add the project root to sys.path before importing.
+"yolo-from-scratch/**" = ["E402"]
