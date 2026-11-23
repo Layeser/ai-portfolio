@@ -1,0 +1,77 @@
+{
+  "features": {
+    "amount": {
+      "psi": 0.0102,
+      "status": "stable"
+    },
+    "log_amount": {
+      "psi": 0.0102,
+      "status": "stable"
+    },
+    "hour": {
+      "psi": 0.0007,
+      "status": "stable"
+    },
+    "is_night": {
+      "psi": 0.0,
+      "status": "stable"
+    },
+    "is_online": {
+      "psi": 0.1073,
+      "status": "warning"
+    },
+    "merchant_code": {
+      "psi": 0.1075,
+      "status": "warning"
+    },
+    "is_foreign": {
+      "psi": 1.0938,
+      "status": "drift"
+    },
+    "new_device": {
+      "psi": 0.0014,
+      "status": "stable"
+    },
+    "new_country": {
+      "psi": 0.0041,
+      "status": "stable"
+    },
+    "amount_to_mean_ratio": {
+      "psi": 0.0172,
+      "status": "stable"
+    },
+    "tx_count_1h": {
+      "psi": 0.0003,
+      "status": "stable"
+    },
+    "tx_count_24h": {
+      "psi": 0.0,
+      "status": "stable"
+    },
+    "amount_sum_24h": {
+      "psi": 0.0092,
+      "status": "stable"
+    },
+    "new_device_tx_24h": {
+      "psi": 0.0021,
+      "status": "stable"
+    },
+    "secs_since_last_tx": {
+      "psi": 0.0002,
+      "status": "stable"
+    }
+  },
+  "score_psi": 0.2385,
+  "alert_rate": {
+    "reference": 0.00614,
+    "current": 0.01693
+  },
+  "drifted_features": [
+    "is_foreign"
+  ],
+  "pr_auc": {
+    "reference_test": 0.9051,
+    "current": 0.7205
+  },
+  "retrain_recommended": true
+}

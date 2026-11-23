@@ -1,0 +1,116 @@
+{
+  "n_alerts": 15,
+  "frauds_in_sample": 7,
+  "auto_decided": 13,
+  "accuracy_when_decided": 0.846,
+  "frauds_cleared_by_mistake": 2,
+  "legit_alerts_closed": 7,
+  "escalated_to_human": 2,
+  "rows": [
+    {
+      "tx_id": "T0502875",
+      "band": "review",
+      "is_fraud": 1,
+      "verdict": "likely_fraud",
+      "action": "block_card_and_contact_customer"
+    },
+    {
+      "tx_id": "T0545061",
+      "band": "review",
+      "is_fraud": 1,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0555185",
+      "band": "review",
+      "is_fraud": 1,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0559816",
+      "band": "review",
+      "is_fraud": 1,
+      "verdict": "needs_human_review",
+      "action": "contact_customer"
+    },
+    {
+      "tx_id": "T0523430",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0531154",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0507841",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0540642",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "contact_customer"
+    },
+    {
+      "tx_id": "T0550044",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0554950",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "needs_human_review",
+      "action": "contact_customer"
+    },
+    {
+      "tx_id": "T0564551",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0516996",
+      "band": "review",
+      "is_fraud": 0,
+      "verdict": "likely_legitimate",
+      "action": "close_alert"
+    },
+    {
+      "tx_id": "T0544861",
+      "band": "block",
+      "is_fraud": 1,
+      "verdict": "likely_fraud",
+      "action": "block_card_and_contact_customer"
+    },
+    {
+      "tx_id": "T0544515",
+      "band": "block",
+      "is_fraud": 1,
+      "verdict": "likely_fraud",
+      "action": "block_card_and_contact_customer"
+    },
+    {
+      "tx_id": "T0548024",
+      "band": "block",
+      "is_fraud": 1,
+      "verdict": "likely_fraud",
+      "action": "block_card_and_contact_customer"
+    }
+  ]
+}

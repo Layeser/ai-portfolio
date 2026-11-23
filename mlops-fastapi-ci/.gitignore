@@ -1,8 +1,0 @@
-__pycache__/
-.venv/
-venv/
-mlruns/
-mlflow.db
-model.pkl
-.pytest_cache/
-.DS_Store

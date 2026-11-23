@@ -1,0 +1,64 @@
+{
+  "version": "20261121-191000",
+  "features": [
+    "amount",
+    "log_amount",
+    "hour",
+    "is_night",
+    "is_online",
+    "merchant_code",
+    "is_foreign",
+    "new_device",
+    "new_country",
+    "amount_to_mean_ratio",
+    "tx_count_1h",
+    "tx_count_24h",
+    "amount_sum_24h",
+    "new_device_tx_24h",
+    "secs_since_last_tx"
+  ],
+  "thresholds": {
+    "block": 0.32056684300749394,
+    "review": 0.008056804270165066
+  },
+  "metrics": {
+    "pr_auc": {
+      "rules": 0.4261,
+      "logistic_regression": 0.6441,
+      "lightgbm": 0.9051
+    },
+    "roc_auc_lightgbm": 0.9945,
+    "operating_points": {
+      "block": {
+        "threshold": 0.3206,
+        "precision": 0.9197,
+        "recall": 0.8873,
+        "fraud_amount_recall": 0.8961,
+        "alerts_per_10k_tx": 19.2
+      },
+      "review": {
+        "threshold": 0.0081,
+        "precision": 0.2908,
+        "recall": 0.9155,
+        "fraud_amount_recall": 0.9179,
+        "alerts_per_10k_tx": 62.6
+      }
+    },
+    "recall_by_scenario_at_review": {
+      "account_takeover": 1.0,
+      "card_testing": 1.0,
+      "stealth": 0.2
+    },
+    "best_iteration": 105,
+    "rows": {
+      "train": 287087,
+      "valid": 71715,
+      "test": 71432
+    },
+    "fraud_rate_test": 0.00199
+  },
+  "train_period": [
+    "2026-01-31 00:01:28",
+    "2026-03-31 23:58:11"
+  ]
+}
