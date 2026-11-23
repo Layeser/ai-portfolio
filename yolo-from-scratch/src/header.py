@@ -61,5 +61,8 @@ class YOLOv1Header(nn.Module):
             *x.shape[:-1], self.num_boxes * 5
         )
 
-        class_predictions = torch.sigmoid(x[..., self.num_boxes * 5 :])
-        return torch.cat([box_predictions, class_predictions], dim=-1)
+        # Class scores are returned as raw logits: the loss applies a softmax cross-entropy and
+        # decoding applies a softmax. (Sigmoid + MSE, as in the original paper, learned the classes
+        # so slowly that the model still predicted "person" everywhere after 9 epochs.)
+        class_logits = x[..., self.num_boxes * 5 :]
+        return torch.cat([box_predictions, class_logits], dim=-1)

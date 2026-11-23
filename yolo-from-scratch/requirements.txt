@@ -6,3 +6,9 @@ numpy>=1.24.0
 tqdm>=4.66.0
 
 # prepare_voc.py only needs PyYAML (no torch required for download)
+
+# API
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+httpx>=0.27

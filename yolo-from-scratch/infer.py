@@ -110,7 +110,7 @@ def main() -> None:
             scores = detections["scores"][keep]
             labels = detections["labels"][keep]
             print(f"{img_path.name}: {len(boxes)} detections")
-            for box, score, label in zip(boxes, scores, labels):
+            for box, score, label in zip(boxes, scores, labels, strict=False):
                 print(f"  class={label.item()} score={score.item():.3f} box={box.tolist()}")
         else:
             print(f"{img_path.name}: no detections")

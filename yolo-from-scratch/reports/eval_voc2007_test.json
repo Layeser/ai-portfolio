@@ -1,0 +1,26 @@
+{
+  "mAP@0.5": 0.2354,
+  "per_class_AP": {
+    "aeroplane": 0.3682,
+    "bicycle": 0.3211,
+    "bird": 0.1309,
+    "boat": 0.0604,
+    "bottle": 0.0076,
+    "bus": 0.3479,
+    "car": 0.3143,
+    "cat": 0.3898,
+    "chair": 0.049,
+    "cow": 0.1506,
+    "diningtable": 0.2258,
+    "dog": 0.312,
+    "horse": 0.3829,
+    "motorbike": 0.4202,
+    "person": 0.3261,
+    "pottedplant": 0.0419,
+    "sheep": 0.1496,
+    "sofa": 0.1603,
+    "train": 0.4183,
+    "tvmonitor": 0.1312
+  },
+  "n_images": 4952
+}

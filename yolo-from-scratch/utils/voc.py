@@ -209,7 +209,7 @@ def _load_image_ids(split_file: Path) -> list[str]:
     """Load image IDs from a VOC ImageSets/Main/*.txt file."""
     if not split_file.exists():
         return []
-    with open(split_file, "r", encoding="utf-8") as f:
+    with open(split_file, encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
 
 

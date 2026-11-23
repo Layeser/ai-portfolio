@@ -75,46 +75,53 @@ class YOLODataset(Dataset):
         padded.paste(resized, (pad_x, pad_y))
         return padded, scale, pad_x, pad_y
 
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def annotations(self, idx: int, image_size_wh: tuple[int, int] | None = None) -> tuple[torch.Tensor, torch.Tensor]:
+        """Ground-truth boxes (cx, cy, w, h in letterboxed pixels) and labels for one image.
+
+        Kept separate from the YOLO grid target, which can only hold one object per cell:
+        evaluation must use *all* annotated objects.
+        """
         img_path = self.image_paths[idx]
         label_path = self.label_dir / (img_path.stem + ".txt")
-
-        image = Image.open(img_path).convert("RGB")
-        orig_w, orig_h = image.size
-
-        image, scale, pad_x, pad_y = self._letterbox(image)
-        if self.color_jitter is not None:
-            image = self.color_jitter(image)
-        image = self.to_tensor(image)
+        if image_size_wh is None:
+            with Image.open(img_path) as im:
+                image_size_wh = im.size
+        orig_w, orig_h = image_size_wh
+        scale = min(self.image_size / orig_w, self.image_size / orig_h)
+        pad_x = (self.image_size - max(1, int(round(orig_w * scale)))) // 2
+        pad_y = (self.image_size - max(1, int(round(orig_h * scale)))) // 2
 
         boxes: list[list[float]] = []
         labels: list[int] = []
-
         if label_path.exists():
-            with open(label_path, "r", encoding="utf-8") as f:
+            with open(label_path, encoding="utf-8") as f:
                 for line in f:
                     parts = line.strip().split()
                     if len(parts) < 5:
                         continue
-                    cls_id = int(parts[0])
                     cx, cy, w, h = map(float, parts[1:5])
                     # Normalized (original image) -> absolute pixels in the letterboxed square
-                    boxes.append(
-                        [
-                            cx * orig_w * scale + pad_x,
-                            cy * orig_h * scale + pad_y,
-                            w * orig_w * scale,
-                            h * orig_h * scale,
-                        ]
-                    )
-                    labels.append(cls_id)
+                    boxes.append([cx * orig_w * scale + pad_x, cy * orig_h * scale + pad_y,
+                                  w * orig_w * scale, h * orig_h * scale])
+                    labels.append(int(parts[0]))
+        if not boxes:
+            return torch.zeros(0, 4), torch.zeros(0, dtype=torch.long)
+        return torch.tensor(boxes, dtype=torch.float32), torch.tensor(labels, dtype=torch.long)
 
-        if boxes:
-            box_tensor = torch.tensor(boxes, dtype=torch.float32)
-            label_tensor = torch.tensor(labels, dtype=torch.long)
-        else:
-            box_tensor = torch.zeros(0, 4)
-            label_tensor = torch.zeros(0, dtype=torch.long)
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+        image = Image.open(self.image_paths[idx]).convert("RGB")
+        size = image.size
+        image, _, _, _ = self._letterbox(image)
+        box_tensor, label_tensor = self.annotations(idx, size)
+        if self.color_jitter is not None:
+            image = self.color_jitter(image)
+            if torch.rand(1).item() < 0.5:  # horizontal flip: mirror the image and the box centres
+                image = image.transpose(Image.FLIP_LEFT_RIGHT)
+                if len(box_tensor):
+                    box_tensor = box_tensor.clone()
+                    box_tensor[:, 0] = self.image_size - box_tensor[:, 0]
+            image, box_tensor, label_tensor = random_scale_translate(image, box_tensor, label_tensor)
+        image = self.to_tensor(image)
 
         target = encode_boxes(
             box_tensor,
@@ -124,3 +131,37 @@ class YOLODataset(Dataset):
             image_size=self.image_size,
         )
         return image, target
+
+
+def random_scale_translate(
+    image: Image.Image,
+    boxes: torch.Tensor,
+    labels: torch.Tensor,
+    scale: tuple[float, float] = (0.8, 1.2),
+    translate: float = 0.2,
+    min_visible: float = 0.35,
+) -> tuple[Image.Image, torch.Tensor, torch.Tensor]:
+    """YOLO-paper style augmentation: random scaling and translation of up to 20 % of the image size.
+
+    Boxes (cx, cy, w, h in pixels) follow the same affine map, are clipped to the image, and are
+    dropped when less than `min_visible` of their area remains inside.
+    """
+    size = image.size[0]
+    s = float(torch.empty(1).uniform_(*scale))
+    tx, ty = (float(v) * translate * size for v in torch.empty(2).uniform_(-1, 1))
+    c = size / 2
+    # PIL's affine takes the inverse map (output pixel -> input pixel): x_in = (x_out - c - tx) / s + c
+    inverse = (1 / s, 0, c - (c + tx) / s, 0, 1 / s, c - (c + ty) / s)
+    out = image.transform(image.size, Image.AFFINE, inverse, resample=Image.BILINEAR, fillcolor=(114, 114, 114))
+    if not len(boxes):
+        return out, boxes, labels
+
+    x1 = (boxes[:, 0] - boxes[:, 2] / 2 - c) * s + c + tx
+    y1 = (boxes[:, 1] - boxes[:, 3] / 2 - c) * s + c + ty
+    x2 = (boxes[:, 0] + boxes[:, 2] / 2 - c) * s + c + tx
+    y2 = (boxes[:, 1] + boxes[:, 3] / 2 - c) * s + c + ty
+    area = (x2 - x1) * (y2 - y1)
+    x1, y1, x2, y2 = (v.clamp(0, size) for v in (x1, y1, x2, y2))
+    keep = ((x2 - x1) * (y2 - y1) >= min_visible * area) & (x2 - x1 > 2) & (y2 - y1 > 2)
+    new_boxes = torch.stack([(x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1], dim=1)[keep]
+    return out, new_boxes, labels[keep]

@@ -10,7 +10,12 @@ class YOLOv1Loss(nn.Module):
     Components:
       1. Coordinate loss  — MSE on (x, y) and sqrt(w, h) for responsible predictor
       2. Confidence loss  — MSE on object / no-object cells (weighted)
-      3. Classification   — MSE on one-hot class vector (with sqrt trick optional)
+      3. Classification   — softmax cross-entropy on object cells
+
+    Two deliberate departures from the paper, both found necessary in practice (see README):
+      * the responsible box's confidence target is 1, not the (initially ~0) IoU, which otherwise
+        kept objectness near zero while the no-object term pushed every confidence down;
+      * classes use cross-entropy on logits instead of MSE on probabilities.
     """
 
     def __init__(
@@ -42,18 +47,15 @@ class YOLOv1Loss(nn.Module):
         Returns:
             total_loss, dict of loss components for logging
         """
-        device = predictions.device
         batch_size = predictions.size(0)
         s = self.grid_size
         b = self.num_boxes
-        c = self.num_classes
 
         # Split predictions into box params and class scores
         pred_boxes = predictions[..., : b * 5].view(batch_size, s, s, b, 5)
         pred_classes = predictions[..., b * 5 :]
 
         obj_mask = targets[..., 0:1]          # (B, S, S, 1)
-        noobj_mask = 1.0 - obj_mask
         box_targets = targets[..., 1:5]       # (B, S, S, 4)
         class_targets = targets[..., 5:]      # (B, S, S, C)
 
@@ -82,15 +84,21 @@ class YOLOv1Loss(nn.Module):
         )
 
         # --- 2. Confidence loss ---
-        # Object cells: target confidence = IoU(pred, gt) as in the paper (detached).
-        conf_target = (best_iou * obj_mask).detach()
-        obj_conf_loss = self.mse(responsible_pred[..., 4:5] * obj_mask, conf_target)
+        # Object cells: the responsible box should predict "object here" (target 1).
+        obj_conf_loss = self.mse(responsible_pred[..., 4:5] * obj_mask, obj_mask)
 
-        # No-object cells: target confidence = 0 for all boxes
-        noobj_conf_loss = self.mse(pred_boxes[..., 4] * noobj_mask, torch.zeros_like(pred_boxes[..., 4]) * noobj_mask)
+        # No-object confidence = 0: every box of empty cells, and the non-responsible box of object cells.
+        responsible = torch.zeros_like(pred_boxes[..., 4]).scatter_(-1, best_box_idx, 1.0) * obj_mask
+        noobj_conf_loss = self.mse(pred_boxes[..., 4] * (1.0 - responsible), torch.zeros_like(pred_boxes[..., 4]))
 
-        # --- 3. Classification loss (only cells with objects) ---
-        class_loss = self.mse(pred_classes * obj_mask, class_targets * obj_mask)
+        # --- 3. Classification loss (only cells with objects): softmax cross-entropy on logits ---
+        cells = obj_mask[..., 0] > 0
+        if cells.any():
+            class_loss = nn.functional.cross_entropy(
+                pred_classes[cells], class_targets[cells].argmax(-1), reduction="sum"
+            )
+        else:
+            class_loss = pred_classes.sum() * 0.0
 
         total = (
             self.lambda_coord * coord_loss

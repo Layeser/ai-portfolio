@@ -105,7 +105,7 @@ def draw_boxes(image: Image.Image, boxes: torch.Tensor, scores: torch.Tensor, la
     except Exception:
         font = None
 
-    for box, score, label in zip(boxes, scores, labels):
+    for box, score, label in zip(boxes, scores, labels, strict=False):
         x_center, y_center, w, h = box.tolist()
         x1 = max(0, x_center - w / 2)
         y1 = max(0, y_center - h / 2)

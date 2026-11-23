@@ -1,0 +1,12 @@
+{
+  "backend": "github",
+  "github": {
+    "repo": "Layeser/ai-portfolio",
+    "tag": "yolov1-voc2007-v1",
+    "title": "YOLOv1 VOC 2007 weights"
+  },
+  "files": {
+    "yolov1_voc2007_fp16.pt": "checkpoints/yolov1/yolov1_voc2007_fp16.pt",
+    "eval_voc2007_test.json": "reports/eval_voc2007_test.json"
+  }
+}

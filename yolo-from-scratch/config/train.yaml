@@ -8,17 +8,18 @@ model:
   pretrained_backbone: true                # IMPORTANT: use ImageNet weights (training from scratch on a small VOC subset does not converge)
 
 data:
-  train_root: "data/voc/train"
-  val_root: "data/voc/val"
+  train_root: "data/voc/train"      # VOC 2007 + 2012 trainval, minus the holdout
+  val_root: "data/voc/holdout"      # 1,000 trainval images: checkpoint selection only
+  test_root: "data/voc/val"         # VOC 2007 test: final mAP only, never used for any choice
   image_size: 448
-  num_workers: 4
+  num_workers: 6
   augment: true
 
   # PASCAL VOC download / preparation (run: python prepare_voc.py)
   voc:
-    auto_prepare: true       # download & convert before training if data is missing
+    auto_prepare: false      # run prepare_voc.py + scripts/make_holdout.py once (re-preparing would wipe the holdout split)
     output_dir: "data/voc"
-    years: ["2007"]            # "2007" only (~900 MB) | add "2012" for full set (~3 GB)
+    years: ["2007", "2012"]    # standard YOLO training set (07+12); "2007" only is ~900 MB
     max_train_samples: 0    # cap train images (0 = no limit, full trainval ~5011 for 2007)
     max_val_samples: 0      # cap val images   (0 = no limit, full test ~4952 for 2007)
     classes: null              # null = all 20 VOC classes | e.g. ["person", "car", "dog"]
@@ -27,9 +28,10 @@ data:
 train:
   epochs: 75
   batch_size: 16
-  learning_rate: 0.001         # SGD base LR (fine-tuning a pretrained backbone); warmup + cosine schedule applied
-  warmup_epochs: 3             # linearly ramp LR from ~0 to learning_rate over the first epochs
-  min_learning_rate: 0.0001    # final LR reached by cosine annealing
+  optimizer: "adamw"           # adamw | sgd  (SGD at 1e-3 could not even overfit 16 images, see README)
+  learning_rate: 0.0001        # AdamW base LR; warmup + cosine schedule applied
+  warmup_epochs: 2             # linearly ramp LR from ~0 to learning_rate over the first epochs
+  min_learning_rate: 0.000001  # final LR reached by cosine annealing
   weight_decay: 0.0005
   momentum: 0.9
   grad_clip: 5.0

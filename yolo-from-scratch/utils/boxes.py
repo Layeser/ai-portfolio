@@ -27,7 +27,7 @@ def encode_boxes(
     target = torch.zeros(grid_size, grid_size, 5 + num_classes)
     cell_size = image_size / grid_size
 
-    for box, label in zip(boxes, labels):
+    for box, label in zip(boxes, labels, strict=False):
         x, y, w, h = box.tolist()
         grid_x = min(int(x / cell_size), grid_size - 1)
         grid_y = min(int(y / cell_size), grid_size - 1)
@@ -69,7 +69,7 @@ def decode_predictions(
             for j in range(grid_size):
                 cell = pred[i, j]
                 box_preds = cell[: num_boxes * 5].view(num_boxes, 5)
-                class_scores = cell[num_boxes * 5 :]
+                class_scores = torch.softmax(cell[num_boxes * 5 :], dim=-1)  # head returns logits
                 class_id = class_scores.argmax().item()
                 class_prob = class_scores[class_id].item()
 

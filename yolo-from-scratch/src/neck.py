@@ -27,9 +27,10 @@ class YOLOv1Neck(nn.Module):
             ConvBlock(1024, 1024, kernel_size=3),
             ConvBlock(1024, 1024, kernel_size=3, stride=2),  # downsample toward S×S
             ConvBlock(1024, 1024, kernel_size=3),
-            ConvBlock(1024, 1024, kernel_size=3),
-            ConvBlock(1024, 1024, kernel_size=3, stride=2),  # final grid alignment
+            ConvBlock(1024, 1024, kernel_size=3),  # stride 1: the paper downsamples only once (14 -> 7)
         )
+        # Bug fixed in 2026: a second stride-2 conv here produced a 4x4 map that adaptive pooling
+        # stretched to 7x7, so the "7x7" grid had 4x4 real positions and the detector could not localise.
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.neck(x)
