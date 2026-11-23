@@ -7,9 +7,6 @@ Loss = reconstruction BCE + KL(q(z|x) || N(0,I))
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
@@ -18,8 +15,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from tqdm import tqdm
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import ensure_outputs, set_seed
+from mlscratch.utils.common import ensure_outputs, set_seed
 
 
 class VAE(nn.Module):

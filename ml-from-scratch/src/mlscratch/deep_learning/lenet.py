@@ -9,9 +9,6 @@ Classic architecture (modernized activations):
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -19,8 +16,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from tqdm import tqdm
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import set_seed
+from mlscratch.utils.common import set_seed
 
 
 class LeNet(nn.Module):

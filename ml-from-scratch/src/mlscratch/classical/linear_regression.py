@@ -10,14 +10,10 @@ Dataset: synthetic y = 3x + 2 + noise  (classic teaching toy)
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import ensure_outputs, mse, set_seed, train_test_split
+from mlscratch.utils.common import ensure_outputs, mse, set_seed, train_test_split
 
 
 class LinearRegression:
@@ -28,7 +24,7 @@ class LinearRegression:
         self.b: float = 0.0
         self.losses: list[float] = []
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "LinearRegression":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> LinearRegression:
         n, d = X.shape
         self.w = np.zeros(d)
         self.b = 0.0
@@ -40,7 +36,7 @@ class LinearRegression:
             self.losses.append(float(np.mean(err**2)))
         return self
 
-    def fit_closed_form(self, X: np.ndarray, y: np.ndarray) -> "LinearRegression":
+    def fit_closed_form(self, X: np.ndarray, y: np.ndarray) -> LinearRegression:
         """Normal equations with bias column: w = (X^T X)^-1 X^T y."""
         Xb = np.c_[np.ones(len(X)), X]
         theta = np.linalg.pinv(Xb.T @ Xb) @ Xb.T @ y

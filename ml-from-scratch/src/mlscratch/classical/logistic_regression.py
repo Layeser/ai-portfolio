@@ -8,15 +8,11 @@ Dataset: sklearn make_classification (labels only; model is ours)
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.datasets import make_classification
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import accuracy, ensure_outputs, set_seed, train_test_split
+from mlscratch.utils.common import accuracy, ensure_outputs, set_seed, train_test_split
 
 
 def sigmoid(z: np.ndarray) -> np.ndarray:
@@ -31,7 +27,7 @@ class LogisticRegression:
         self.w: np.ndarray | None = None
         self.b: float = 0.0
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "LogisticRegression":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> LogisticRegression:
         n, d = X.shape
         self.w = np.zeros(d)
         self.b = 0.0

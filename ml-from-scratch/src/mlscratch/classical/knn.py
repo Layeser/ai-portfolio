@@ -7,14 +7,10 @@ Dataset: Iris (classic).
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import numpy as np
 from sklearn.datasets import load_iris
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import accuracy, set_seed, train_test_split
+from mlscratch.utils.common import accuracy, set_seed, train_test_split
 
 
 class KNearestNeighbors:
@@ -23,7 +19,7 @@ class KNearestNeighbors:
         self.X: np.ndarray | None = None
         self.y: np.ndarray | None = None
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "KNearestNeighbors":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> KNearestNeighbors:
         self.X = X.astype(float)
         self.y = y
         return self

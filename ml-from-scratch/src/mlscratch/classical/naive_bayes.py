@@ -7,18 +7,14 @@ Dataset: Iris.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import numpy as np
 from sklearn.datasets import load_iris
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import accuracy, set_seed, train_test_split
+from mlscratch.utils.common import accuracy, set_seed, train_test_split
 
 
 class GaussianNaiveBayes:
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "GaussianNaiveBayes":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> GaussianNaiveBayes:
         self.classes_ = np.unique(y)
         self.priors_ = {}
         self.mean_ = {}

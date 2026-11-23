@@ -1,6 +1,13 @@
-numpy>=1.24.0
-matplotlib>=3.7.0
-torch>=2.0.0
-torchvision>=0.15.0
-tqdm>=4.66.0
-scikit-learn>=1.3.0  # only for datasets / train_test_split baselines, not for model internals
+# Classical ML, deep learning and a seq2seq Transformer implemented from the maths, verified against scikit-learn.
+# Install into the shared venv:  pip install -r requirements.txt
+
+numpy>=1.24
+matplotlib>=3.7
+torch>=2.0
+torchvision>=0.15
+tqdm>=4.66
+scikit-learn>=1.3
+
+# dev
+pytest>=8
+ruff>=0.5

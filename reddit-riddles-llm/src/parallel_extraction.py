@@ -3,12 +3,11 @@ Parallel processing functions for extracting problem/solution pairs.
 This module provides optimized parallel processing for LLM-based answer selection.
 """
 
-import re
-import pandas as pd
-from typing import Dict, Optional, Tuple
-from concurrent import futures
-from tqdm import tqdm
 import concurrent.futures
+import re
+
+import pandas as pd
+from tqdm import tqdm
 
 
 def process_single_post(post_data, comments_by_post, use_top_level_only, strategy, llm_model, select_best_answer, select_best_answer_with_llm):

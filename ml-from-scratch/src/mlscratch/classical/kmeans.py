@@ -7,15 +7,11 @@ Dataset: 3 isotropic Gaussian blobs.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.datasets import make_blobs
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import ensure_outputs, set_seed
+from mlscratch.utils.common import ensure_outputs, set_seed
 
 
 class KMeans:
@@ -25,7 +21,7 @@ class KMeans:
         self.seed = seed
         self.centroids: np.ndarray | None = None
 
-    def fit(self, X: np.ndarray) -> "KMeans":
+    def fit(self, X: np.ndarray) -> KMeans:
         rng = np.random.default_rng(self.seed)
         # init: random points from data
         idx = rng.choice(len(X), size=self.k, replace=False)

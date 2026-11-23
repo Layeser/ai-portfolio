@@ -15,7 +15,7 @@ Inspired by the teaching style of [Andrej Karpathy](https://karpathy.ai/) — sm
 ## Layout
 
 ```text
-ml-from-scratch/
+ml-from-scratch/src/mlscratch/
 ├── classical/          # NumPy
 │   ├── linear_regression.py
 │   ├── logistic_regression.py
@@ -39,20 +39,39 @@ ml-from-scratch/
 ```bash
 cd ml-from-scratch
 python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && export PYTHONPATH=src
+```
+
+## Correctness: checked against scikit-learn
+
+Writing an algorithm from the maths only counts if it gives the right answer. `tests/` (13 tests, ~15 s on CPU,
+run in CI) compares every classical model with its scikit-learn reference, with explicit tolerances:
+
+| Model | Check |
+|---|---|
+| Linear regression | closed form = sklearn coefficients (rtol 1e-6); gradient descent converges to the closed form |
+| PCA | explained variance identical; components identical up to sign |
+| k-NN, Gaussian naive Bayes | ≥ 97 % identical predictions (only distance ties may differ) |
+| Logistic regression, decision tree | test accuracy within 2 / 5 points of sklearn on breast cancer |
+| k-means | ARI > 0.95 on separated blobs; inertia within 5 % of sklearn's |
+| LeNet, ResNet-18, autoencoder, VAE | output shapes; KL term = 0 for a standard-normal posterior; each model overfits a tiny batch (classic bug detector) |
+
+```bash
 pip install -r requirements.txt
+pytest tests -q
 ```
 
 ## Classical ML (NumPy)
 
 | Algorithm | Dataset | Run |
 |-----------|---------|-----|
-| Linear regression | `make_regression` | `python classical/linear_regression.py` |
-| Logistic regression | `make_classification` | `python classical/logistic_regression.py` |
-| k-NN | Iris | `python classical/knn.py` |
-| Gaussian Naive Bayes | Iris | `python classical/naive_bayes.py` |
-| Decision tree (CART, Gini) | Iris | `python classical/decision_tree.py` |
-| k-Means | blobs | `python classical/kmeans.py` |
-| PCA | Iris (2D viz) | `python classical/pca.py` |
+| Linear regression | `make_regression` | `python -m mlscratch.classical.linear_regression` |
+| Logistic regression | `make_classification` | `python -m mlscratch.classical.logistic_regression` |
+| k-NN | Iris | `python -m mlscratch.classical.knn` |
+| Gaussian Naive Bayes | Iris | `python -m mlscratch.classical.naive_bayes` |
+| Decision tree (CART, Gini) | Iris | `python -m mlscratch.classical.decision_tree` |
+| k-Means | blobs | `python -m mlscratch.classical.kmeans` |
+| PCA | Iris (2D viz) | `python -m mlscratch.classical.pca` |
 
 Plots land in `outputs/<algo>/`.
 
@@ -60,20 +79,20 @@ Plots land in `outputs/<algo>/`.
 
 | Model | Task | Run |
 |-------|------|-----|
-| Autoencoder | MNIST reconstruction | `python deep_learning/autoencoder.py` |
-| VAE | MNIST + latent walk | `python deep_learning/vae.py` |
-| LeNet-5 | MNIST classification | `python deep_learning/lenet.py` |
-| ResNet-18 (CIFAR variant) | CIFAR-10 | `python deep_learning/resnet.py` |
+| Autoencoder | MNIST reconstruction | `python -m mlscratch.deep_learning.autoencoder` |
+| VAE | MNIST + latent walk | `python -m mlscratch.deep_learning.vae` |
+| LeNet-5 | MNIST classification | `python -m mlscratch.deep_learning.lenet` |
+| ResNet-18 (CIFAR variant) | CIFAR-10 | `python -m mlscratch.deep_learning.resnet` |
 
 First run downloads MNIST / CIFAR via `torchvision` into `./data` (gitignored).
 
 ## NLP — English → French (autoregressive)
 
-Handwritten parallel corpus in [`nlp/en_fr_translation/data.py`](nlp/en_fr_translation/data.py) (~65 pairs).  
+Handwritten parallel corpus in [`data.py`](src/mlscratch/nlp/en_fr_translation/data.py) (~65 pairs).  
 Model: small **Encoder–Decoder Transformer** with causal masking; inference is **greedy autoregressive** token-by-token.
 
 ```bash
-python -m nlp.en_fr_translation.train
+python -m mlscratch.nlp.en_fr_translation.train
 ```
 
 You should see training loss drop and sample translations like:

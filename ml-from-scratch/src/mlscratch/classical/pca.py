@@ -9,15 +9,11 @@ Dataset: Iris → 2D projection.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.datasets import load_iris
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import ensure_outputs, set_seed
+from mlscratch.utils.common import ensure_outputs, set_seed
 
 
 class PCA:
@@ -27,7 +23,7 @@ class PCA:
         self.mean_: np.ndarray | None = None
         self.explained_variance_ratio_: np.ndarray | None = None
 
-    def fit(self, X: np.ndarray) -> "PCA":
+    def fit(self, X: np.ndarray) -> PCA:
         self.mean_ = X.mean(axis=0)
         Xc = X - self.mean_
         cov = (Xc.T @ Xc) / (len(X) - 1)

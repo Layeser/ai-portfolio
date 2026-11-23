@@ -8,18 +8,12 @@ Usage:
 from __future__ import annotations
 
 import random
-import sys
-from pathlib import Path
 
 import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pad_sequence
 
-ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from nlp.en_fr_translation.data import (
+from mlscratch.nlp.en_fr_translation.data import (
     BOS,
     EOS,
     PAD,
@@ -28,12 +22,12 @@ from nlp.en_fr_translation.data import (
     decode,
     encode,
 )
-from nlp.en_fr_translation.model import Seq2SeqTransformer
-from utils.common import set_seed
+from mlscratch.nlp.en_fr_translation.model import Seq2SeqTransformer
+from mlscratch.utils.common import set_seed
 
 
 def collate(batch, pad_id: int):
-    srcs, tgts = zip(*batch)
+    srcs, tgts = zip(*batch, strict=False)
     src = pad_sequence([torch.tensor(s) for s in srcs], batch_first=True, padding_value=pad_id)
     tgt = pad_sequence([torch.tensor(t) for t in tgts], batch_first=True, padding_value=pad_id)
     # teacher forcing: input = tgt[:-1], target = tgt[1:]

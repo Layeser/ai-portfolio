@@ -7,15 +7,12 @@ Dataset: Iris (multi-class).
 
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
-from pathlib import Path
 
 import numpy as np
 from sklearn.datasets import load_iris
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from utils.common import accuracy, set_seed, train_test_split
+from mlscratch.utils.common import accuracy, set_seed, train_test_split
 
 
 def gini(y: np.ndarray) -> float:
@@ -30,8 +27,8 @@ def gini(y: np.ndarray) -> float:
 class Node:
     feature: int | None = None
     threshold: float | None = None
-    left: "Node | None" = None
-    right: "Node | None" = None
+    left: Node | None = None
+    right: Node | None = None
     value: int | None = None  # leaf class
 
 
@@ -81,7 +78,7 @@ class DecisionTree:
             right=self._grow(X[~left_mask], y[~left_mask], depth + 1),
         )
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "DecisionTree":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> DecisionTree:
         self.root = self._grow(X, y, 0)
         return self
 
