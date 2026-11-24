@@ -1,0 +1,46 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": {
+      "loss_cls": 0.5704,
+      "loss_box": 0.4679
+    },
+    "holdout_mAP07": 0.4126,
+    "holdout_mAP": 0.406,
+    "train_minutes": 19.4,
+    "eval_s_per_image": 1.992
+  },
+  {
+    "epoch": 2,
+    "train_loss": {
+      "loss_cls": 0.3552,
+      "loss_box": 0.3609
+    },
+    "holdout_mAP07": 0.513,
+    "holdout_mAP": 0.5172,
+    "train_minutes": 20.7,
+    "eval_s_per_image": 1.893
+  },
+  {
+    "epoch": 3,
+    "train_loss": {
+      "loss_cls": 0.287,
+      "loss_box": 0.3154
+    },
+    "holdout_mAP07": 0.5485,
+    "holdout_mAP": 0.551,
+    "train_minutes": 20.7,
+    "eval_s_per_image": 1.903
+  },
+  {
+    "epoch": 4,
+    "train_loss": {
+      "loss_cls": 0.1706,
+      "loss_box": 0.2324
+    },
+    "holdout_mAP07": 0.6393,
+    "holdout_mAP": 0.6486,
+    "train_minutes": 20.9,
+    "eval_s_per_image": 2.183
+  }
+]

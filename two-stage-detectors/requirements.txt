@@ -1,0 +1,13 @@
+# R-CNN, Fast R-CNN and Faster R-CNN implemented in PyTorch, compared on PASCAL VOC 2007.
+# Install into the shared venv:  pip install -r requirements.txt
+
+torch>=2.2
+torchvision>=0.17
+numpy>=1.26
+pillow>=10
+matplotlib>=3.8
+opencv-contrib-python-headless>=4.8   # Selective Search (cv2.ximgproc), for R-CNN / Fast R-CNN proposals
+
+# dev
+pytest>=8
+ruff>=0.5

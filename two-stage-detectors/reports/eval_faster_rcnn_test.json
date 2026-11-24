@@ -1,0 +1,29 @@
+{
+  "mAP07": 0.7172,
+  "mAP": 0.7393,
+  "per_class_AP07": {
+    "aeroplane": 0.7793,
+    "bicycle": 0.7751,
+    "bird": 0.7432,
+    "boat": 0.574,
+    "bottle": 0.5614,
+    "bus": 0.7449,
+    "car": 0.8015,
+    "cat": 0.8527,
+    "chair": 0.5569,
+    "cow": 0.7615,
+    "diningtable": 0.684,
+    "dog": 0.8224,
+    "horse": 0.8632,
+    "motorbike": 0.7619,
+    "person": 0.7837,
+    "pottedplant": 0.4471,
+    "sheep": 0.7303,
+    "sofa": 0.6951,
+    "train": 0.7491,
+    "tvmonitor": 0.6569
+  },
+  "n_images": 4952,
+  "seconds_per_image": 0.08,
+  "split": "test"
+}
