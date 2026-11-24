@@ -41,7 +41,7 @@ explicit refusal when the documents do not contain the answer.
 | [visual-search](./visual-search/) | Image similarity search: 4 representations compared (pixels, autoencoder, self-supervised SimCLR, ImageNet transfer), FAISS index, search API | SimCLR without labels: P@10 **0.68** vs 0.35 for an autoencoder; ImageNet transfer 0.77 |
 | [two-stage-detectors](./two-stage-detectors/) | R-CNN, Fast R-CNN and Faster R-CNN re-implemented on one ResNet-50 base and compared under the papers' protocol (VOC 2007) | Faster R-CNN **71.7 %** mAP (paper: 69.9 %), Fast 67.2 %, R-CNN 62.5 %; 12× faster from R-CNN to Faster |
 | [sales-forecasting](./sales-forecasting/) | 28-day forecasts for 30,490 Walmart item×store series (M5) from sales, calendar and prices: LightGBM, TiDE (PyTorch), blend, forecast API | WRMSSE **0.555** on the M5 evaluation period (seasonal naive 0.847, winner 0.520) |
-| [yolo-from-scratch](./yolo-from-scratch/) | YOLOv1 written from scratch in PyTorch; debugging three training bugs (neck, loss, optimizer) with an oracle check and overfit tests | VOC 2007 test mAP@0.5 **0.235** (from 0.0002 before the fixes), ResNet-50 ImageNet backbone, 25 epochs |
+| [yolo-from-scratch](./yolo-from-scratch/) | YOLOv1 written from scratch in PyTorch; debugging three training bugs (neck, loss, optimizer) with an oracle check and overfit tests | From scratch, 25 epochs on a laptop GPU: the point of this project is the diagnosis (mAP@0.5 0.0002 → **0.235** on VOC 2007 test), not the mAP |
 
 ## Foundations
 
