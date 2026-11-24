@@ -5,7 +5,7 @@ the matching motion-capture sequences from a library of 6,018. CLIP-style dual e
 sentence encoder for text, a Transformer over motion frames, trained with a symmetric contrastive loss.
 
 This started as a university data challenge on Kaggle (Université de Lille, Centrale Lille, IMT Nord Europe),
-which our two-person team **Recall@1** won: **1st place** on the
+which our three-person team **Recall@1** won: **1st place** on the
 [final leaderboard](https://www.kaggle.com/competitions/text-to-motion-retrieval/leaderboard)
 with a score of **0.898** (2nd: 0.867, 3rd: 0.847). The leaderboard score is the average of
 Recall@k for k = 1…10 weighted by 1/k, so ranking the right motion first matters most. The leaderboard

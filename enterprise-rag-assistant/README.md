@@ -153,5 +153,5 @@ tests/test_core.py           15 tests (text normalisation, chunking, RRF, guardr
 * The corpus is small (10 documents, 52 chunks) and fictional. Retrieval is easier than on a real intranet,
   and the paraphrase set is the main safeguard against over-optimism.
 * Facts are checked by exact value matching; a semantic judge would accept more valid phrasings.
-* The faithfulness judge (`gpt-oss-20b`) is itself an LLM. Its verdicts were spot-checked, not audited.
+* The faithfulness judge (`qwen3.8-27b`) is itself an LLM. Its verdicts were spot-checked, not audited.
 * Free-tier rate limits make a full evaluation take about 20 minutes.

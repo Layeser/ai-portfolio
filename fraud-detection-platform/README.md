@@ -5,7 +5,7 @@ service with explanations → drift monitoring → an LLM agent (LangGraph + MCP
 and writes the analyst report**, with deterministic guardrails on top of the LLM.
 
 It is a public, synthetic-data reconstruction of the architecture I built as a freelance Data & AI
-engineer for a bank's fraud team (CDC ingestion, ML scoring, AI agents assisting the audit team).
+engineer for a microfinance institution (CDC ingestion, ML scoring, AI agents assisting the audit team).
 No client code or data is used here: transactions come from a simulator that reproduces the hard
 parts of the real problem (0.25 % fraud rate, per-customer behaviour, legitimate behaviour that looks
 risky, fraud that looks normal).
