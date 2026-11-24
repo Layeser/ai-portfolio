@@ -1,0 +1,40 @@
+{
+  "args": {
+    "base": "Qwen/Qwen2.5-1.5B-Instruct",
+    "epochs": 3,
+    "lr": 0.0002,
+    "rank": 16,
+    "batch": 2,
+    "accum": 8,
+    "max_len": 1024,
+    "out": "artifacts/lora"
+  },
+  "trainable_params": 18464768,
+  "total_params": 1562179072,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.116,
+      "field_f1": 0.819,
+      "doc_accuracy": 0.39,
+      "valid_json": 0.98,
+      "minutes": 7.8
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.0357,
+      "field_f1": 0.8475,
+      "doc_accuracy": 0.44,
+      "valid_json": 1.0,
+      "minutes": 15.1
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.02,
+      "field_f1": 0.8562,
+      "doc_accuracy": 0.5,
+      "valid_json": 1.0,
+      "minutes": 22.3
+    }
+  ]
+}

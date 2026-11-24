@@ -53,6 +53,7 @@ explicit refusal when the documents do not contain the answer.
 
 | Project | What it shows |
 |---|---|
+| [llm-finetuning](./llm-finetuning/) | LoRA fine-tuning (PEFT) of Qwen2.5-1.5B-Instruct for receipt → JSON extraction (CORD v2): answer-only loss, epoch chosen on validation, merged adapter behind an async FastAPI service. Field F1 **0.54 → 0.87** on test, 45 % of receipts fully right (0 % zero-shot), 4× faster |
 | [langchain-tool-agents](./langchain-tool-agents/) | Compact tool-calling agent (LangChain 1.x), offline timezone tool, tested end to end |
 | [reddit-riddles-llm](./reddit-riddles-llm/) | LLM-based reference extraction and evaluation (semantic similarity, LLM judge) |
 

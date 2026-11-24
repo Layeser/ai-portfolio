@@ -31,6 +31,9 @@ jobs:
           - project: ranking-bandits
             install: pip install -r requirements.txt
             test: pytest -q
+          - project: llm-finetuning
+            install: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+            test: pytest -q
           - project: sales-forecasting
             install: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
             test: pytest -q
