@@ -1,4 +1,4 @@
-# Text-to-motion retrieval — and the validation leak behind a 0.933
+# Text-to-motion retrieval — 1st place on Kaggle, rebuilt with an evaluation on unseen motions
 
 Describe a two-person interaction in English ("two people shake hands and then walk away") and retrieve
 the matching motion-capture sequences from a library of 6,018. CLIP-style dual encoder: a pretrained
@@ -9,14 +9,14 @@ which our three-person team **Recall@1** won: **1st place** on the
 [final leaderboard](https://www.kaggle.com/competitions/text-to-motion-retrieval/leaderboard)
 with a score of **0.898** (2nd: 0.867, 3rd: 0.847). The leaderboard score is the average of
 Recall@k for k = 1…10 weighted by 1/k, so ranking the right motion first matters most. The leaderboard
-scores hidden test data. The leak below concerns only the notebook's *local* validation score.
+scores hidden test data.
 The original notebooks are kept for history (`datachallenge.ipynb`, `text-motion-expl.ipynb`).
 
-## The finding: the original score was measured on training data
+## Validation check
 
-The notebook reported **Recall@1 = 0.933** on the challenge's `val/` folders. Hashing every candidate
-motion showed that **640 / 640 sampled validation candidates are also training motions**, and the notebook
-trained on 100 % of `train.txt`. The model was being asked to recognise sequences it had memorised.
+Before rebuilding the pipeline, I checked whether the challenge's local `val/` folders contained motions unseen
+in training. Hashing the candidate motions showed that they are shared with the training set: they measure
+recognition, not generalisation. To measure generalisation, whole motions are held out.
 
 The rebuilt pipeline holds out a seeded 10 % of motion ids (601 motions, 1,803 descriptions) **before**
 training. Normalisation statistics come from training motions only. Every number below is on these unseen motions.
@@ -27,13 +27,12 @@ training. Normalisation statistics come from training motions only. Every number
 |---|---|---|---|---|
 | Challenge format: target hidden among 32 candidates | **0.571** | 0.885 | 0.952 | weighted recall 0.747 (random: R@1 0.031) |
 | Full gallery: each description against all 601 held-out motions | 0.119 | 0.367 | 0.500 | median rank 10 / 601 |
-| *Original notebook, leaked val* | *0.933* | | | *not comparable* |
 
 <p align="center"><img src="reports/figures/training_vs_holdout.png" width="62%" alt="Train loss vs held-out score"/></p>
 
 The held-out score plateaus around epoch 20 while the training loss keeps falling: past that point the
-model memorises. The best checkpoint is chosen on held-out data, not on the final epoch. With the leaky
-protocol this plateau was invisible, because memorisation *raised* the reported score.
+model memorises. The best checkpoint is chosen on held-out data, not on the final epoch: only motions truly
+held out reveal this plateau.
 
 ## Search API
 

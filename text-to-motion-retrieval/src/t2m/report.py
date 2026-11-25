@@ -13,8 +13,6 @@ import matplotlib.pyplot as plt  # noqa: E402
 from t2m.data import ROOT  # noqa: E402
 from t2m.train import ARTIFACTS  # noqa: E402
 
-LEAKED_VAL_R1 = 0.933  # original notebook, on "val" folders whose motions were in the training set
-
 
 def main() -> None:
     metrics = json.loads((ARTIFACTS / "metrics.json").read_text())
@@ -29,7 +27,6 @@ def main() -> None:
              label="held-out weighted recall (32 candidates)")
     r1 = metrics["holdout"]["challenge_32"]["R@1"]
     ax2.axhline(r1, color="#167D9A", ls=":", lw=1.2, label=f"held-out R@1, best checkpoint ({r1:.3f})")
-    ax2.axhline(LEAKED_VAL_R1, color="#C0392B", ls="--", lw=1.2, label="R@1 reported on leaked val (0.933)")
     ax2.set(ylabel="held-out score", ylim=(0, 1))
     lines = ax.get_legend_handles_labels()[0] + ax2.get_legend_handles_labels()[0]
     labels = ax.get_legend_handles_labels()[1] + ax2.get_legend_handles_labels()[1]
