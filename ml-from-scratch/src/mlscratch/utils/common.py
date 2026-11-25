@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -11,15 +12,15 @@ OUTPUTS = ROOT / "outputs"
 
 
 def set_seed(seed: int = 42) -> None:
-    np.random.seed(seed)
-    try:
-        import torch
+    """Seed NumPy, and PyTorch only if the calling script already uses it.
 
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
-    except ImportError:
-        pass
+    Importing torch here would initialise CUDA inside pure-NumPy scripts, which is slow and pulls the GPU stack
+    into code that never needs it.
+    """
+    np.random.seed(seed)
+    torch = sys.modules.get("torch")
+    if torch is not None:
+        torch.manual_seed(seed)  # also seeds every CUDA device when CUDA is in use
 
 
 def train_test_split(
