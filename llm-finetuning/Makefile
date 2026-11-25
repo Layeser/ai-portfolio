@@ -1,6 +1,6 @@
 PY ?= python
 export PYTHONPATH := src
-.PHONY: install data baseline train evaluate all figures serve test
+.PHONY: install data baseline train evaluate all figures serve test export-weights upload-weights download-weights
 
 install:          ## dependencies into the active (shared) venv
 	$(PY) -m pip install -r requirements.txt
@@ -15,6 +15,12 @@ evaluate:         ## fine-tuned model on the test split
 all: baseline train evaluate figures
 figures:
 	$(PY) scripts/make_figures.py
+export-weights:   ## adapter + test scores -> release/, checksums in weights.sha256
+	$(PY) scripts/weights.py export
+upload-weights:   ## attach release/ to the GitHub Release (gh CLI)
+	$(PY) scripts/weights.py upload
+download-weights: ## fetch + verify the released adapter (no training needed)
+	$(PY) scripts/weights.py download
 serve:            ## POST /extract {"text": "..."}
 	uvicorn receiptllm.api:app
 test:

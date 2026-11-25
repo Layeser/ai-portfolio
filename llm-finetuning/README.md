@@ -74,6 +74,14 @@ It stops working when:
 * **an exact value matters more than the structure**: a number can be copied wrongly and nothing checks it; totals
   should be cross-checked (sum of items, tax) before use.
 
+## Use it without training
+
+```bash
+pip install -r requirements.txt
+make download-weights   # LoRA adapter (74 MB) from the GitHub Release, SHA-256 verified -> artifacts/lora
+make serve              # POST /extract {"text": "..."}; the base model is fetched from the Hugging Face Hub
+```
+
 ## Run it
 
 ```bash

@@ -1,0 +1,16 @@
+{
+  "backend": "github",
+  "github": {
+    "repo": "Layeser/ai-portfolio",
+    "tag": "twostage-voc2007-v1",
+    "title": "R-CNN, Fast R-CNN and Faster R-CNN weights (VOC 2007)"
+  },
+  "files": {
+    "faster_rcnn_voc2007_fp16.pt": "checkpoints/faster_rcnn/faster_rcnn_voc2007_fp16.pt",
+    "fast_rcnn_voc2007_fp16.pt": "checkpoints/fast_rcnn/fast_rcnn_voc2007_fp16.pt",
+    "rcnn_voc2007_fp16.pt": "checkpoints/rcnn/rcnn_voc2007_fp16.pt",
+    "eval_faster_rcnn_test.json": "reports/eval_faster_rcnn_test.json",
+    "eval_fast_rcnn_test.json": "reports/eval_fast_rcnn_test.json",
+    "eval_rcnn_test.json": "reports/eval_rcnn_test.json"
+  }
+}

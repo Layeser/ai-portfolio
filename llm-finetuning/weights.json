@@ -1,0 +1,13 @@
+{
+  "backend": "github",
+  "github": {
+    "repo": "Layeser/ai-portfolio",
+    "tag": "receipt-lora-v1",
+    "title": "LoRA adapter: Qwen2.5-1.5B-Instruct for receipt extraction (CORD v2)"
+  },
+  "files": {
+    "adapter_model.safetensors": "artifacts/lora/adapter_model.safetensors",
+    "adapter_config.json": "artifacts/lora/adapter_config.json",
+    "eval_lora_test.json": "reports/eval_lora_test.json"
+  }
+}

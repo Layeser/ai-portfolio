@@ -62,6 +62,18 @@ an oracle — ground-truth boxes as detections give mAP 1.0).
   bf16 autocast, horizontal flips, shorter side 600 px. 12 epochs for Fast and Faster R-CNN, 4 for R-CNN.
 - Laptop GPU (RTX 5060, 8 GB): ~9 min/epoch for Fast and Faster R-CNN, ~20 min/epoch for R-CNN.
 
+## Use it without training
+
+```bash
+pip install -r requirements.txt
+make download-weights   # the three detectors in float16 (152 MB) from the GitHub Release, SHA-256 verified
+python -m twostage.evaluate --model faster_rcnn --weights checkpoints/faster_rcnn/faster_rcnn_voc2007_fp16.pt
+```
+
+Float16 halves the download. On the first 300 test images, mAP float32 → float16: Faster R-CNN 0.741 → 0.749,
+Fast R-CNN 0.713 → 0.714, R-CNN 0.645 → 0.649 (rounding noise, within one point).
+Fast R-CNN and R-CNN also need the Selective Search proposals (`make proposals`).
+
 ## Reproduce
 
 ```bash
