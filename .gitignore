@@ -2,3 +2,6 @@
 __pycache__/
 .pytest_cache/
 .ruff_cache/
+
+# Working notes for the explainers (local only)
+QUESTIONS.md
