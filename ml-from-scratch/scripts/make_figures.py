@@ -20,11 +20,8 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 from sklearn.cluster import KMeans as SkKMeans  # noqa: E402
 from sklearn.datasets import (  # noqa: E402
-    load_breast_cancer,
     load_iris,
-    load_wine,
     make_blobs,
-    make_circles,
     make_classification,
     make_moons,
 )
@@ -34,7 +31,7 @@ from mlscratch.classical.decision_tree import DecisionTree  # noqa: E402
 from mlscratch.classical.kmeans import KMeans  # noqa: E402
 from mlscratch.classical.knn import KNearestNeighbors  # noqa: E402
 from mlscratch.classical.linear_regression import LinearRegression  # noqa: E402
-from mlscratch.classical.logistic_regression import LogisticRegression, sigmoid  # noqa: E402
+from mlscratch.classical.logistic_regression import LogisticRegression  # noqa: E402
 from mlscratch.classical.naive_bayes import GaussianNaiveBayes  # noqa: E402
 from mlscratch.classical.pca import PCA  # noqa: E402
 
@@ -78,56 +75,6 @@ def pca_figures() -> dict:
     ax.legend(frameon=False)
     save(fig, FIG / "pca" / "iris_projection.png")
 
-    # failure 1: unscaled features. Wine: proline is in the hundreds/thousands, hue around 1.
-    wine = load_wine()
-    X = wine.data
-    raw = PCA(2).fit(X)
-    std = (X - X.mean(0)) / X.std(0, ddof=1)
-    scaled = PCA(2).fit(std)
-    top = int(np.argmax(np.abs(raw.components_[:, 0])))
-    m["wine_raw_ratio_pc1"] = round(float(raw.explained_variance_ratio_[0]), 4)
-    m["wine_raw_pc1_top_feature"] = wine.feature_names[top]
-    m["wine_raw_pc1_top_loading"] = round(float(abs(raw.components_[top, 0])), 4)
-    m["wine_scaled_ratio_pc1_pc2"] = [round(float(x), 4) for x in scaled.explained_variance_ratio_]
-    m["wine_proline_std"] = round(float(X[:, top].std(ddof=1)), 1)
-    m["wine_hue_std"] = round(float(X[:, wine.feature_names.index("hue")].std(ddof=1)), 3)
-    fig, axes = plt.subplots(1, 2, figsize=(9, 4))
-    scatter_by_class(axes[0], raw.transform(X), wine.target, labels=list(wine.target_names))
-    axes[0].set_title(f"Raw units: PC1 = {wine.feature_names[top]} ({100 * raw.explained_variance_ratio_[0]:.1f} %)")
-    scatter_by_class(axes[1], scaled.transform(std), wine.target, labels=list(wine.target_names))
-    axes[1].set_title(f"Standardised: PC1 {100 * scaled.explained_variance_ratio_[0]:.1f} %, "
-                      f"PC2 {100 * scaled.explained_variance_ratio_[1]:.1f} %")
-    for ax in axes:
-        ax.set_xlabel("PC1")
-        ax.set_ylabel("PC2")
-    axes[1].legend(frameon=False, fontsize=8)
-    fig.suptitle(f"Wine without standardisation: proline (std {m['wine_proline_std']:.0f}) outweighs hue "
-                 f"(std {m['wine_hue_std']:.2f}) and decides PC1", fontsize=11)
-    save(fig, FIG / "pca" / "wine_unscaled_vs_standardised.png")
-
-    # failure 2: structure that is not linear. Two concentric circles; PCA to 1D mixes them completely.
-    Xc, yc = make_circles(n_samples=400, factor=0.4, noise=0.05, random_state=0)
-    p1 = PCA(1).fit(Xc)
-    z = p1.transform(Xc)[:, 0]
-    m["circles_ratio_pc1"] = round(float(p1.explained_variance_ratio_[0]), 4)
-    # best single threshold on PC1, as a measure of how separable the classes are after projection
-    zs = np.sort(z)
-    best = max(max(np.mean((z > t) == yc), np.mean((z <= t) == yc)) for t in (zs[:-1] + zs[1:]) / 2)
-    m["circles_best_threshold_accuracy_on_pc1"] = round(float(best), 4)
-    fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), gridspec_kw={"width_ratios": [1, 1.3]})
-    scatter_by_class(axes[0], Xc, yc, labels=["outer", "inner"], s=12)
-    axes[0].set_aspect("equal")
-    axes[0].set_title("Input: two concentric circles")
-    axes[0].legend(frameon=False, fontsize=8)
-    for i, c in enumerate([0, 1]):
-        axes[1].hist(z[yc == c], bins=30, histtype="step", color=COLORS[i], linewidth=1.6,
-                     linestyle=["-", "--"][i], label=["outer", "inner"][i])
-    axes[1].set_xlabel("position on PC1")
-    axes[1].set_ylabel("count")
-    axes[1].set_title(f"After PCA to 1-D: best threshold separates {100 * best:.0f} %")
-    axes[1].legend(frameon=False, fontsize=8)
-    fig.suptitle("A linear projection cannot unfold a non-linear structure", fontsize=11)
-    save(fig, FIG / "pca" / "circles_nonlinear.png")
     return m
 
 
@@ -150,24 +97,6 @@ def kmeans_figures() -> dict:
     ax.set_title(f"Three round, equal-size blobs: ARI {m['blobs_ari']:.2f} against the true labels")
     ax.legend(frameon=False, fontsize=8)
     save(fig, FIG / "kmeans" / "blobs.png")
-
-    # failure 1: non-convex clusters
-    Xm, ym = make_moons(n_samples=400, noise=0.06, random_state=0)
-    kmm = KMeans(k=2, seed=0).fit(Xm)
-    labm = kmm.predict(Xm)
-    m["moons_ari"] = round(float(adjusted_rand_score(ym, labm)), 4)
-    fig, axes = plt.subplots(1, 2, figsize=(9, 3.6))
-    scatter_by_class(axes[0], Xm, ym, labels=["moon A", "moon B"], s=12)
-    axes[0].set_title("True structure: two crescents")
-    scatter_by_class(axes[1], Xm, labm, labels=["cluster 0", "cluster 1"], s=12)
-    axes[1].scatter(kmm.centroids[:, 0], kmm.centroids[:, 1], marker="X", s=160, c="black")
-    axes[1].set_title(f"k-means, k = 2: ARI {m['moons_ari']:.2f}")
-    for ax in axes:
-        ax.set_xlabel("x1")
-        ax.set_ylabel("x2")
-        ax.legend(frameon=False, fontsize=8)
-    fig.suptitle("k-means cuts the plane with a straight line: crescents become two halves", fontsize=11)
-    save(fig, FIG / "kmeans" / "moons.png")
 
     # initialisation: 100 seeds on 8 blobs, this implementation in three modes, against scikit-learn's best of 10
     X8, _ = make_blobs(n_samples=800, centers=8, cluster_std=0.9, random_state=4)
@@ -288,42 +217,6 @@ def linear_regression_figures() -> dict:
     ax.legend(frameon=False, fontsize=8)
     save(fig, FIG / "linear_regression" / "collinearity.png")
 
-    # gradient descent and feature scale: one feature in [-1, 1], one multiplied by 100
-    Xs = np.c_[rng.uniform(-1, 1, 300), rng.uniform(-1, 1, 300)]
-    ys = Xs @ np.array([2.0, -1.0]) + 0.1 * rng.standard_normal(300)
-    Xu = Xs * np.array([1.0, 100.0])
-    target = float(np.mean((LinearRegression().fit_closed_form(Xs, ys).predict(Xs) - ys) ** 2)) * 1.01
-
-    def iters_to(Xa, lr):
-        r = LinearRegression(lr=lr, n_iters=20000).fit(Xa, ys)
-        hit = np.nonzero(np.array(r.losses) <= target)[0]
-        return (int(hit[0]) + 1 if len(hit) else None), r.losses
-
-    lam = np.linalg.eigvalsh(Xu.T @ Xu / len(Xu)).max()
-    lr_u = 1.0 / lam  # largest step that keeps the unscaled problem stable, up to a factor 2
-    it_s, loss_s = iters_to(Xs, 0.5)
-    it_u, loss_u = iters_to(Xu, lr_u)
-    m["scale_iters_standard_lr0.5"] = it_s
-    m["scale_iters_unscaled_max_stable_lr"] = it_u
-    m["scale_unscaled_lr"] = float(f"{lr_u:.2e}")
-    try:
-        with np.errstate(over="ignore", invalid="ignore"):
-            LinearRegression(lr=0.5, n_iters=200).fit(Xu, ys)
-        m["scale_unscaled_lr0.5_diverges"] = False
-    except FloatingPointError:
-        m["scale_unscaled_lr0.5_diverges"] = True
-    fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot(loss_s[:3000], color=COLORS[0], linewidth=1.8, label="features in [-1, 1], lr = 0.5")
-    ax.plot(loss_u[:3000], color=COLORS[1], linewidth=1.8, linestyle="--",
-            label=f"second feature × 100, lr = {lr_u:.1e} (largest stable)")
-    ax.axhline(target, color="black", linewidth=0.8, linestyle=":")
-    ax.set_yscale("log")
-    ax.set_xlabel("iteration")
-    ax.set_ylabel("training MSE (log)")
-    ax.set_title(f"Same data, one feature in other units: {it_s} iterations vs {it_u or '> 20000'}\n"
-                 f"(lr = 0.5 on the unscaled data diverges)")
-    ax.legend(frameon=False, fontsize=8)
-    save(fig, FIG / "linear_regression" / "feature_scale.png")
     return m
 
 
@@ -342,31 +235,6 @@ def logistic_regression_figures() -> dict:
     ax.set_ylabel("x2")
     ax.legend(frameon=False, fontsize=8)
     save(fig, FIG / "logistic_regression" / "boundary.png")
-
-    # separable data: without a penalty, ‖w‖ keeps growing
-    Xs, ys = make_blobs(n_samples=200, centers=[[-2, 0], [2, 0]], cluster_std=0.5, random_state=0)
-    norms = {}
-    for alpha in (0.0, 0.01):
-        # the same update as LogisticRegression.fit, unrolled to record ‖w‖ at every step
-        path, w, b = [], np.zeros(2), 0.0
-        for _ in range(20000):
-            p = sigmoid(Xs @ w + b)
-            err = p - ys
-            w = w - 0.5 * ((Xs.T @ err) / len(ys) + alpha * w)
-            b = b - 0.5 * np.mean(err)
-            path.append(np.linalg.norm(w))
-        norms[alpha] = np.array(path)
-    m["separable_norm_no_penalty_at_1k_10k_20k"] = [round(float(norms[0.0][i]), 2) for i in (999, 9999, 19999)]
-    m["separable_norm_l2_0.01_at_1k_10k_20k"] = [round(float(norms[0.01][i]), 2) for i in (999, 9999, 19999)]
-    fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot(np.arange(1, 20001), norms[0.0], color=COLORS[1], linewidth=1.8, linestyle="--", label="no penalty")
-    ax.plot(np.arange(1, 20001), norms[0.01], color=COLORS[0], linewidth=1.8, label="L2, alpha = 0.01")
-    ax.set_xscale("log")
-    ax.set_xlabel("iteration (log)")
-    ax.set_ylabel("‖w‖")
-    ax.set_title("Perfectly separable data: without a penalty ‖w‖ never stops growing")
-    ax.legend(frameon=False, fontsize=8)
-    save(fig, FIG / "logistic_regression" / "separable_weights.png")
 
     # class imbalance: 95 % / 5 %
     Xi, yi = make_classification(n_samples=4000, weights=[0.95, 0.05], class_sep=0.8, random_state=0)
@@ -409,47 +277,6 @@ def knn_figures() -> dict:
                  fontsize=11)
     save(fig, FIG / "knn" / "k_smoothness.png")
 
-    # query time against n (brute force: every query scans every training point)
-    rng = np.random.default_rng(0)
-    sizes = [1_000, 5_000, 20_000, 50_000, 100_000, 200_000]
-    Q = rng.standard_normal((200, 10))
-    times = []
-    for n in sizes:
-        mdl = KNearestNeighbors(k=5).fit(rng.standard_normal((n, 10)), rng.integers(0, 2, n))
-        mdl.predict(Q[:10])  # warm-up
-        t0 = time.perf_counter()
-        mdl.predict(Q)
-        times.append((time.perf_counter() - t0) / len(Q) * 1e3)
-    m["timing_note"] = "milliseconds per query, d = 10, k = 5, this machine; ratios are the meaningful part"
-    m["timing_ms_per_query"] = {str(n): round(t, 3) for n, t in zip(sizes, times, strict=True)}
-    fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot(sizes, times, "o-", color=COLORS[0], linewidth=1.6)
-    ax.set_xscale("log")
-    ax.set_yscale("log")
-    ax.set_xlabel("training points n (log)")
-    ax.set_ylabel("time per query, ms (log)")
-    ax.set_title("No index: every query scans all n points,\nso the time per query grows with n (timings vary by machine)")
-    save(fig, FIG / "knn" / "query_time.png")
-
-    # irrelevant features: 2 informative dimensions + noise dimensions
-    Xb, yb = make_moons(n_samples=600, noise=0.2, random_state=1)
-    extra = [0, 2, 5, 10, 20, 50]
-    scores = []
-    for e in extra:
-        Xe = np.c_[Xb, np.random.default_rng(e).standard_normal((len(Xb), e))] if e else Xb
-        Xe = (Xe - Xe.mean(0)) / Xe.std(0)
-        a, b_, c, d_ = split(Xe, yb)
-        scores.append(acc(d_, KNearestNeighbors(k=15).fit(a, c).predict(b_)))
-    m["irrelevant_features_test_accuracy"] = {str(e): round(s, 3) for e, s in zip(extra, scores, strict=True)}
-    fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot(extra, scores, "s-", color=COLORS[1], linewidth=1.6)
-    ax.axhline(0.5, color="black", linestyle=":", linewidth=1, label="chance")
-    ax.set_xlabel("irrelevant (noise) features added to the 2 informative ones")
-    ax.set_ylabel("test accuracy, k = 15")
-    ax.set_ylim(0.4, 1.02)
-    ax.set_title(f"Distances drown in irrelevant dimensions: {scores[0]:.2f} → {scores[-1]:.2f}")
-    ax.legend(frameon=False, fontsize=8)
-    save(fig, FIG / "knn" / "irrelevant_features.png")
     return m
 
 
@@ -469,49 +296,6 @@ def naive_bayes_figures() -> dict:
     ax.legend(frameon=False, fontsize=8)
     save(fig, FIG / "naive_bayes" / "iris_regions.png")
 
-    # correlated features: duplicate the features r times; the evidence is counted r times
-    Xc, yc = load_breast_cancer(return_X_y=True)
-    Xc = (Xc - Xc.mean(0)) / Xc.std(0)
-    Xtr, Xte, ytr, yte = split(Xc, yc)
-    copies = [1, 2, 4, 8]
-    ll, ac, conf = [], [], []
-    for r in copies:
-        mdl = GaussianNaiveBayes().fit(np.tile(Xtr, r), ytr)
-        p = mdl.predict_proba(np.tile(Xte, r))
-        ll.append(float(-np.mean(np.log(np.clip(p[np.arange(len(yte)), yte], 1e-15, 1)))))
-        ac.append(acc(yte, mdl.classes_[p.argmax(1)]))
-        conf.append(float(np.mean(p.max(1) > 0.999)))
-    m["duplicates_copies"] = copies
-    m["duplicates_log_loss"] = [round(v, 3) for v in ll]
-    m["duplicates_accuracy"] = [round(v, 3) for v in ac]
-    m["duplicates_share_predictions_above_0.999"] = [round(v, 3) for v in conf]
-    fig, ax1 = plt.subplots(figsize=(6.5, 4))
-    ax1.plot(copies, ll, "o-", color=COLORS[1], linewidth=1.6, label="log loss (lower is better)")
-    ax1.plot(copies, ac, "s--", color=COLORS[0], linewidth=1.6, label="accuracy")
-    ax1.set_xscale("log", base=2)
-    ax1.set_xticks(copies, [str(c) for c in copies])
-    ax1.set_xlabel("copies of every feature (perfectly correlated duplicates)")
-    ax1.set_title(f"Duplicated features: accuracy stays {ac[0]:.2f}, log loss {ll[0]:.2f} → {ll[-1]:.2f}\n"
-                  f"(the same evidence counted {copies[-1]} times: overconfidence)")
-    ax1.legend(frameon=False, fontsize=8)
-    save(fig, FIG / "naive_bayes" / "correlated_features.png")
-
-    # a class made of two blobs (XOR): one Gaussian per class cannot fit it
-    rng = np.random.default_rng(0)
-    centres = np.array([[-2, -2], [2, 2], [-2, 2], [2, -2]])
-    Xx = np.vstack([c + 0.7 * rng.standard_normal((150, 2)) for c in centres])
-    yx = np.repeat([0, 0, 1, 1], 150)
-    a, b_, c, d_ = split(Xx, yx)
-    nbx = GaussianNaiveBayes().fit(a, c)
-    m["xor_nb_test_accuracy"] = round(acc(d_, nbx.predict(b_)), 3)
-    m["xor_knn15_test_accuracy"] = round(acc(d_, KNearestNeighbors(k=15).fit(a, c).predict(b_)), 3)
-    fig, ax = plt.subplots(figsize=(6, 4.4))
-    regions(ax, nbx, Xx, yx, f"Each class is two blobs: naive Bayes {m['xor_nb_test_accuracy']:.2f} "
-            f"(k-NN: {m['xor_knn15_test_accuracy']:.2f})", labels=["class 0", "class 1"])
-    ax.set_xlabel("x1")
-    ax.set_ylabel("x2")
-    ax.legend(frameon=False, fontsize=8)
-    save(fig, FIG / "naive_bayes" / "multimodal_class.png")
     return m
 
 
@@ -554,24 +338,6 @@ def decision_tree_figures() -> dict:
     ax.legend(frameon=False, fontsize=8)
     save(fig, FIG / "decision_tree" / "depth_overfitting.png")
 
-    # a diagonal boundary: axis-aligned splits can only approximate it with a staircase
-    rng = np.random.default_rng(0)
-    Xd = rng.uniform(-1, 1, (600, 2))
-    yd = (Xd[:, 1] > Xd[:, 0]).astype(int)
-    a, b_, c, d_ = split(Xd, yd)
-    res = {}
-    for dpt in (2, 4, 8):
-        res[dpt] = acc(d_, DecisionTree(max_depth=dpt).fit(a, c).predict(b_))
-    m["diagonal_test_accuracy_by_depth"] = {str(k): round(v, 3) for k, v in res.items()}
-    m["diagonal_logistic_test_accuracy"] = round(acc(d_, LogisticRegression(n_iters=3000).fit(a, c).predict(b_)), 3)
-    t4 = DecisionTree(max_depth=4).fit(a, c)
-    fig, ax = plt.subplots(figsize=(6, 4.4))
-    regions(ax, t4, Xd, yd, f"Boundary y = x, depth 4: a staircase, test {res[4]:.2f}\n"
-            f"(logistic regression: {m['diagonal_logistic_test_accuracy']:.2f})", labels=["below", "above"])
-    ax.set_xlabel("x1")
-    ax.set_ylabel("x2")
-    ax.legend(frameon=False, fontsize=8)
-    save(fig, FIG / "decision_tree" / "diagonal_staircase.png")
     return m
 
 

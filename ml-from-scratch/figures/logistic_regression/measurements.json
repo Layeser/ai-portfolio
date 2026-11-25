@@ -1,15 +1,5 @@
 {
   "toy_test_accuracy": 0.967,
-  "separable_norm_no_penalty_at_1k_10k_20k": [
-    4.48,
-    6.48,
-    7.16
-  ],
-  "separable_norm_l2_0.01_at_1k_10k_20k": [
-    2.41,
-    2.41,
-    2.41
-  ],
   "imbalance_plain_accuracy_recall_precision": [
     0.948,
     0.129,

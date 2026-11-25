@@ -8,11 +8,5 @@
   "depth_20": {
     "train": 1.0,
     "test": 0.806
-  },
-  "diagonal_test_accuracy_by_depth": {
-    "2": 0.883,
-    "4": 0.933,
-    "8": 0.939
-  },
-  "diagonal_logistic_test_accuracy": 0.994
+  }
 }

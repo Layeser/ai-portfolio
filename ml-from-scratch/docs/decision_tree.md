@@ -4,12 +4,11 @@
 > and the building block of random forests and gradient boosting.
 
 > [!NOTE]
-> **In one paragraph.** CART grows a binary tree greedily: at each node it tries every feature and every threshold,
-> keeps the split that most reduces the impurity of the labels (Gini or entropy), and recurses until a stopping rule
-> (depth, node size, purity). A leaf predicts its majority class. Deep trees fit anything, including noise, so depth
-> and leaf size are the real hyperparameters. It assumes the classes can be separated by axis-aligned cuts.
+> CART grows a binary tree greedily. At each node it tries every feature and every threshold, keeps the split that
+> most reduces the impurity of the labels, and recurses until a stopping rule (depth, node size, purity). A leaf
+> predicts its majority class and returns its class frequencies as probabilities.
 
-## The maths, as implemented
+## Growing the tree
 
 ```math
 G(S) = 1 - \sum_c p_c^2, \qquad
@@ -17,17 +16,15 @@ H(S) = -\sum_c p_c \log_2 p_c, \qquad
 \Delta = I(S) - \frac{|S_L|}{|S|}\, I(S_L) - \frac{|S_R|}{|S|}\, I(S_R)
 ```
 
-$p_c$ is the share of class $c$ in node $S$, $I$ is $G$ or $H$, and $S_L$, $S_R$ are the two children. The split with
-the largest $\Delta$ wins; thresholds are midpoints between consecutive distinct values. A feature's importance is
-the sum of $|S| \cdot \Delta$ over the nodes where it is used, normalised to 1.
+$p_c$ is the share of class $c$ in node $S$, $I$ is the Gini impurity $G$ or the entropy $H$ (`criterion`), and $S_L$,
+$S_R$ are the two children. The split with the largest $\Delta$ wins. A feature's importance is the sum of
+$|S| \cdot \Delta$ over the nodes where it is used, normalised to 1.
 
-## Reading the code
+## A fast split search
 
-From [`src/mlscratch/classical/decision_tree.py`](../src/mlscratch/classical/decision_tree.py).
-
-**Sort once, score every threshold from cumulative counts.** For a feature, the samples are sorted, and the class
-counts left of every possible cut come from one cumulative sum. A node costs $O(d \cdot n \log n)$ instead of
-$O(d \cdot n^2)$ for re-counting each candidate.
+From [`src/mlscratch/classical/decision_tree.py`](../src/mlscratch/classical/decision_tree.py). The naive search
+re-counts the classes on both sides of every candidate threshold, $O(n^2)$ per feature. Here each feature is sorted
+once, and the class counts left of every cut come from a single cumulative sum: $O(n \log n)$.
 
 ```python
 order = np.argsort(X[:, j], kind="stable")
@@ -36,8 +33,7 @@ left = np.cumsum(onehot[order], axis=0)[:-1]  # class counts left of each cut, (
 right = left[-1] + onehot[order][-1] - left
 ```
 
-**Only legal cuts compete.** A cut must fall between two distinct values and leave at least `min_samples_leaf`
-points on each side.
+Only legal cuts compete: between two distinct values, and leaving at least `min_samples_leaf` points on each side.
 
 ```python
 valid = xs[1:] > xs[:-1]  # cut only between distinct values
@@ -45,52 +41,34 @@ n_left = np.arange(1, n)
 valid &= (n_left >= m) & (n - n_left >= m)
 ```
 
-**The threshold is the midpoint**, so a new value between the two training values is not arbitrarily assigned.
+The chosen threshold is the midpoint between the two values, as in scikit-learn, so an unseen value in the gap is not
+assigned arbitrarily:
 
 ```python
 best_gain, best_feat, best_thr = float(gain[i]), j, float((xs[i] + xs[i + 1]) / 2)
 ```
 
-Every node also stores its class frequencies, so `predict_proba` returns them, and `feature_importances_` sums the
-impurity decreases.
+<p align="center"><img src="../figures/decision_tree/iris_regions.png" width="65%" alt="Depth-3 tree on Iris"></p>
 
-## It works
+On Iris petal features, a depth-3 tree draws three rectangles; test accuracy 0.91.
 
-<p align="center"><img src="../figures/decision_tree/iris_regions.png" width="70%" alt="Depth-3 tree on Iris"></p>
-
-Iris petal features, depth 3: three rectangles, test accuracy 0.91.
-
-## Where the method breaks
-
-> [!WARNING]
-> **Depth.** A deep enough tree memorises the training set, noise included.
+## Choosing the depth
 
 <p align="center"><img src="../figures/decision_tree/depth_overfitting.png" width="75%" alt="Train and test accuracy against depth"></p>
 
-Noisy moons: test accuracy peaks at 0.91 at depth 2, then falls to 0.81 at depth 20 while train accuracy reaches 1.00.
+Depth is the main hyperparameter. On noisy moons, test accuracy is best at depth 2 (0.91); deeper trees keep
+improving on the training set, up to 1.00, while test accuracy settles at 0.81. Depth, `min_samples_leaf` and
+`min_samples_split` are the levers; cross-validation picks them.
 
-> [!WARNING]
-> **Diagonal boundaries.** Each split is perpendicular to one axis, so a diagonal becomes a staircase.
+## Limits, and what libraries add
 
-<p align="center"><img src="../figures/decision_tree/diagonal_staircase.png" width="70%" alt="Staircase on a diagonal boundary"></p>
+Single trees have high variance: a small change in the data can change the top split and everything below it. Splits
+are greedy and axis-aligned, so oblique boundaries need many of them, and a leaf returns the same answer far outside
+the training range. That is why trees are mostly used in ensembles: random forests average many decorrelated trees,
+gradient boosting adds small ones sequentially. Production implementations also bin features into histograms for
+speed, prune by cost-complexity, and route missing values during the split search.
 
-Boundary $x_2 = x_1$: test accuracy 0.88 at depth 2, 0.93 at depth 4, 0.94 at depth 8; logistic regression gets 0.99
-with two weights.
-
-## Limits of the method
-
-- **High variance.** Small changes in the data can change the top split and the whole tree; ensembles average this out.
-- **Greedy.** Each split is the best one locally; the tree as a whole is not optimal.
-- **Axis-aligned.** Oblique or curved boundaries need many splits, as measured above.
-- **No extrapolation.** Outside the training range, a leaf returns the same answer forever.
-
-## At scale
-
-Production libraries bin features into histograms (LightGBM, scikit-learn's `HistGradientBoosting`), prune with
-cost-complexity, handle missing values in the split search, and rarely use a single tree: random forests average many
-decorrelated trees and gradient boosting adds small ones sequentially.
-
-## How we know it is right
+## Tests
 
 From [`tests/test_against_sklearn.py`](../tests/test_against_sklearn.py), on breast cancer:
 
@@ -100,13 +78,8 @@ ref = accuracy_score(y_te, DecisionTreeClassifier(max_depth=5, random_state=0).f
 assert ours >= ref - 0.05
 ```
 
-[`tests/test_extras.py`](../tests/test_extras.py): `min_samples_leaf` is respected in every leaf, probabilities sum to 1,
-importances sum to 1, and predictions agree with scikit-learn on at least 97 % of Iris at depth 3.
+[`tests/test_extras.py`](../tests/test_extras.py): every leaf respects `min_samples_leaf`, probabilities and importances
+sum to 1, and predictions agree with scikit-learn on at least 97 % of Iris at depth 3.
 
-> [!TIP]
-> **In an interview.** *Why does a single tree overfit?* Unlimited depth fits noise: train 1.00, test 0.81 here.
-> *Gini or entropy?* Usually similar trees; Gini avoids a logarithm. *Why do forests and boosting work better?* They
-> reduce the variance of single trees by averaging or by adding many small corrections.
-
-<sub>Figures and numbers: `PYTHONPATH=src python scripts/make_figures.py` (values in
-[`figures/decision_tree/measurements.json`](../figures/decision_tree/measurements.json)).</sub>
+<sub>Figures and numbers: `PYTHONPATH=src python scripts/make_figures.py`
+([`figures/decision_tree/measurements.json`](../figures/decision_tree/measurements.json)).</sub>

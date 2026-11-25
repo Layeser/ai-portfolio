@@ -1,6 +1,5 @@
 {
   "blobs_ari": 0.9536,
-  "moons_ari": 0.2738,
   "init_reference_inertia": 1136.8,
   "init_random_1_share_more_than_1pct_worse": 0.95,
   "init_random_1_median_over_reference": 1.634,

@@ -1,18 +1,18 @@
 # Notes: one page per algorithm
 
-For reading rather than running. Each page explains the code in this repository (not the textbook version), shows
-where it works and where it breaks with figures produced by `scripts/make_figures.py`, and lists what this
-implementation does not handle compared with a production library.
+For reading rather than running. Each page walks through the code in this repository (not the textbook version),
+justifies its implementation choices with figures produced by `scripts/make_figures.py`, and states the limits of the
+method.
 
-| Algorithm | Page | Where it breaks |
+| Algorithm | Page | Highlight |
 |---|---|---|
-| Linear regression | [linear_regression.md](linear_regression.md) | collinear features (std of a coefficient: 52 without ridge); unscaled features and gradient descent |
-| Logistic regression | [logistic_regression.md](logistic_regression.md) | separable data (weights grow forever); 5 % positives (13 % recall) |
-| k-NN | [knn.md](knn.md) | query time grows with n; irrelevant features (0.97 → 0.81) |
-| Gaussian naive Bayes | [naive_bayes.md](naive_bayes.md) | correlated features (log loss 0.80 → 2.77); a class made of two blobs |
-| Decision tree | [decision_tree.md](decision_tree.md) | depth (test 0.91 → 0.81); diagonal boundaries |
-| PCA | [pca.md](pca.md) | unscaled features (Wine: one feature takes 99.8 % of the variance); non-linear structure |
-| k-means | [kmeans.md](kmeans.md) | non-convex clusters (two moons); local optima (95 % of single random starts) |
+| Linear regression | [linear_regression.md](linear_regression.md) | gradient descent and least squares agree; why the ridge option (coefficient spread 52 → 0.023) |
+| Logistic regression | [logistic_regression.md](logistic_regression.md) | class weights on 5 % positives: recall 13 % → 89 % |
+| k-NN | [knn.md](knn.md) | a prediction in three vectorised steps; choosing k |
+| Gaussian naive Bayes | [naive_bayes.md](naive_bayes.md) | all classes in one expression; probabilities equal scikit-learn's to 1e-8 |
+| Decision tree | [decision_tree.md](decision_tree.md) | split search in O(n log n); choosing the depth |
+| PCA | [pca.md](pca.md) | two solvers, one answer; a deterministic sign |
+| k-means | [kmeans.md](kmeans.md) | k-means++ and restarts: worse local minima 95 % → 4 % |
 
 Regenerate every figure and number:
 

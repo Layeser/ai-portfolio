@@ -10,9 +10,5 @@
   "collinear_ols_w1_std": 51.99,
   "collinear_ridge_w1_std": 0.023,
   "collinear_ols_sum_mean": 1.995,
-  "collinear_ridge_sum_mean": 1.987,
-  "scale_iters_standard_lr0.5": 29,
-  "scale_iters_unscaled_max_stable_lr": null,
-  "scale_unscaled_lr": 0.000306,
-  "scale_unscaled_lr0.5_diverges": true
+  "collinear_ridge_sum_mean": 1.987
 }

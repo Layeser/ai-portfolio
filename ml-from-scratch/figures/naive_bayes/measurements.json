@@ -1,29 +1,3 @@
 {
-  "iris_petals_test_accuracy": 0.956,
-  "duplicates_copies": [
-    1,
-    2,
-    4,
-    8
-  ],
-  "duplicates_log_loss": [
-    0.802,
-    1.49,
-    2.186,
-    2.766
-  ],
-  "duplicates_accuracy": [
-    0.912,
-    0.912,
-    0.912,
-    0.912
-  ],
-  "duplicates_share_predictions_above_0.999": [
-    0.912,
-    0.976,
-    0.982,
-    0.994
-  ],
-  "xor_nb_test_accuracy": 0.689,
-  "xor_knn15_test_accuracy": 0.994
+  "iris_petals_test_accuracy": 0.956
 }
