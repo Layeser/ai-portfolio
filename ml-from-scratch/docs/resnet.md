@@ -5,7 +5,7 @@
 
 ## The puzzle the skip connection solves
 
-In 2015, He and colleagues observed something odd: a deeper plain network (a stack of convolutions) trained *worse*
+In 2015, Kaiming He and his colleagues at Microsoft Research (the authors of ResNet) observed something odd: a deeper plain network (a stack of convolutions) trained *worse*
 than a shallower one: higher error on the training set itself, so not overfitting. A deeper network could in
 principle copy the shallow one and set its extra layers to the identity; gradient descent just does not find that
 solution.
