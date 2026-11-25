@@ -1,0 +1,37 @@
+{
+  "resnet18_aug": {
+    "final_test_acc": 0.9305,
+    "final_train_acc": 0.9827,
+    "final_train_loss": 0.0564,
+    "params": 11173962,
+    "minutes": 4.9
+  },
+  "resnet18_noaug": {
+    "final_test_acc": 0.881,
+    "final_train_acc": 1.0,
+    "final_train_loss": 0.0015,
+    "params": 11173962,
+    "minutes": 4.4
+  },
+  "plain18_aug": {
+    "final_test_acc": 0.9256,
+    "final_train_acc": 0.9739,
+    "final_train_loss": 0.0816,
+    "params": 11000138,
+    "minutes": 4.2
+  },
+  "resnet34_aug": {
+    "final_test_acc": 0.9315,
+    "final_train_acc": 0.9823,
+    "final_train_loss": 0.0553,
+    "params": 21282122,
+    "minutes": 8.5
+  },
+  "plain34_aug": {
+    "final_test_acc": 0.8656,
+    "final_train_acc": 0.8977,
+    "final_train_loss": 0.3056,
+    "params": 21108298,
+    "minutes": 8.5
+  }
+}

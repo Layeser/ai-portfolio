@@ -1,0 +1,100 @@
+{
+  "random_split": {
+    "share_of_templates_seen_pct": [
+      80,
+      60,
+      40,
+      20,
+      10
+    ],
+    "heldout_em_mean": [
+      1.0,
+      0.975,
+      0.894,
+      0.686,
+      0.469
+    ],
+    "heldout_em_min": [
+      1.0,
+      0.963,
+      0.833,
+      0.557,
+      0.359
+    ],
+    "heldout_em_max": [
+      1.0,
+      0.988,
+      0.933,
+      0.782,
+      0.624
+    ]
+  },
+  "systematic_split": {
+    "n_test": 16,
+    "heldout_em": 0.0,
+    "examples": {
+      "the door is black": "la porte",
+      "the door is white": "la porte",
+      "the door is red": "la porte"
+    }
+  },
+  "default_split": {
+    "n_train": 227,
+    "n_test": 40,
+    "heldout_em": 1.0,
+    "examples": [
+      {
+        "en": "we open the car",
+        "output": "nous ouvrons la voiture",
+        "reference": "nous ouvrons la voiture"
+      },
+      {
+        "en": "she opens the door",
+        "output": "elle ouvre la porte",
+        "reference": "elle ouvre la porte"
+      },
+      {
+        "en": "the book is blue",
+        "output": "le livre est bleu",
+        "reference": "le livre est bleu"
+      },
+      {
+        "en": "he sees the book",
+        "output": "il voit le livre",
+        "reference": "il voit le livre"
+      },
+      {
+        "en": "she sees the bike",
+        "output": "elle voit le velo",
+        "reference": "elle voit le velo"
+      },
+      {
+        "en": "the car is old",
+        "output": "la voiture est vieille",
+        "reference": "la voiture est vieille"
+      },
+      {
+        "en": "the car is big",
+        "output": "la voiture est grande",
+        "reference": "la voiture est grande"
+      },
+      {
+        "en": "he likes the garden",
+        "output": "il aime le jardin",
+        "reference": "il aime le jardin"
+      }
+    ]
+  },
+  "attention_examples": [
+    {
+      "en": "the book is blue",
+      "output": "le livre est bleu",
+      "reference": "le livre est bleu"
+    },
+    {
+      "en": "we open the car",
+      "output": "nous ouvrons la voiture",
+      "reference": "nous ouvrons la voiture"
+    }
+  ]
+}

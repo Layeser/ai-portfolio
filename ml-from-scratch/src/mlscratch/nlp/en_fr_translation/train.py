@@ -1,77 +1,87 @@
 """
-Train a tiny EN→FR Transformer on our handcrafted parallel corpus.
+Train a tiny EN→FR Transformer on the handcrafted corpus and measure it on held-out sentences.
 
 Usage:
-    python -m nlp.en_fr_translation.train
+    python -m mlscratch.nlp.en_fr_translation.train
 """
 
 from __future__ import annotations
 
 import random
+from dataclasses import dataclass, field
 
 import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pad_sequence
 
-from mlscratch.nlp.en_fr_translation.data import (
-    BOS,
-    EOS,
-    PAD,
-    PAIRS,
-    build_vocab,
-    decode,
-    encode,
-)
+from mlscratch.nlp.en_fr_translation.data import BOS, EOS, PAD, build_vocab, decode, encode, train_test_split
 from mlscratch.nlp.en_fr_translation.model import Seq2SeqTransformer
 from mlscratch.utils.common import set_seed
 
 
 def collate(batch, pad_id: int):
-    srcs, tgts = zip(*batch, strict=False)
+    srcs, tgts = zip(*batch, strict=True)
     src = pad_sequence([torch.tensor(s) for s in srcs], batch_first=True, padding_value=pad_id)
     tgt = pad_sequence([torch.tensor(t) for t in tgts], batch_first=True, padding_value=pad_id)
     # teacher forcing: input = tgt[:-1], target = tgt[1:]
     return src, tgt[:, :-1], tgt[:, 1:]
 
 
-def main():
-    set_seed(42)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+@dataclass
+class Translator:
+    model: Seq2SeqTransformer
+    en_stoi: dict[str, int]
+    fr_stoi: dict[str, int]
+    fr_itos: dict[int, str]
+    history: dict[str, list[float]] = field(default_factory=dict)
 
-    en_stoi, en_itos = build_vocab([e for e, _ in PAIRS])
-    fr_stoi, fr_itos = build_vocab([f for _, f in PAIRS])
+    def translate(self, sentence: str) -> str:
+        device = next(self.model.parameters()).device
+        src = torch.tensor([encode(sentence, self.en_stoi, add_bos_eos=False)], device=device)
+        ids = self.model.generate(src, bos_id=self.fr_stoi[BOS], eos_id=self.fr_stoi[EOS])
+        return decode(ids, self.fr_itos)
+
+
+def exact_match(translator: Translator, pairs: list[tuple[str, str]]) -> float:
+    """Share of sentences translated word for word as the reference (greedy decoding)."""
+    return sum(translator.translate(e) == f for e, f in pairs) / max(len(pairs), 1)
+
+
+def train(
+    train_pairs: list[tuple[str, str]],
+    test_pairs: list[tuple[str, str]] | None = None,
+    epochs: int = 150,
+    batch_size: int = 16,
+    lr: float = 3e-4,
+    label_smoothing: float = 0.1,
+    eval_every: int = 10,
+    seed: int = 42,
+    device: str | None = None,
+    verbose: bool = True,
+) -> Translator:
+    set_seed(seed)
+    device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    # The vocabulary comes from the training pairs only: a held-out word would be <unk>, which train_test_split avoids.
+    en_stoi, _ = build_vocab([e for e, _ in train_pairs])
+    fr_stoi, fr_itos = build_vocab([f for _, f in train_pairs])
     pad_id = en_stoi[PAD]
     assert fr_stoi[PAD] == pad_id
 
-    # Tiny handcrafted corpus → train on all pairs (teaching demo, not a benchmark).
-    train = [
-        (encode(e, en_stoi, add_bos_eos=False), encode(f, fr_stoi, add_bos_eos=True))
-        for e, f in PAIRS
-    ]
-
-    model = Seq2SeqTransformer(
-        src_vocab=len(en_stoi),
-        tgt_vocab=len(fr_stoi),
-        d_model=128,
-        nhead=4,
-        num_layers=2,
-        dim_ff=256,
-        pad_id=pad_id,
-    ).to(device)
-    opt = torch.optim.Adam(model.parameters(), lr=3e-4)
-    crit = nn.CrossEntropyLoss(ignore_index=pad_id)
-
-    epochs, batch_size = 100, 16
-    print(f"device={device} | pairs={len(train)} | V_en={len(en_stoi)} V_fr={len(fr_stoi)}")
+    data = [(encode(e, en_stoi, add_bos_eos=False), encode(f, fr_stoi)) for e, f in train_pairs]
+    model = Seq2SeqTransformer(len(en_stoi), len(fr_stoi), pad_id=pad_id).to(device)
+    opt = torch.optim.Adam(model.parameters(), lr=lr)
+    # Label smoothing: the target keeps 90 % of the mass, the rest is spread over the vocabulary, which stops the
+    # model from pushing logits to infinity on a corpus small enough to memorise.
+    crit = nn.CrossEntropyLoss(ignore_index=pad_id, label_smoothing=label_smoothing)
+    translator = Translator(model, en_stoi, fr_stoi, fr_itos, {"epoch": [], "loss": [], "train_em": [], "test_em": []})
+    rng = random.Random(seed)
 
     for ep in range(1, epochs + 1):
         model.train()
-        random.shuffle(train)
+        rng.shuffle(data)
         total, n = 0.0, 0
-        for i in range(0, len(train), batch_size):
-            batch = train[i : i + batch_size]
-            src, tgt_in, tgt_out = collate(batch, pad_id)
-            src, tgt_in, tgt_out = src.to(device), tgt_in.to(device), tgt_out.to(device)
+        for i in range(0, len(data), batch_size):
+            src, tgt_in, tgt_out = (t.to(device) for t in collate(data[i : i + batch_size], pad_id))
             logits = model(src, tgt_in)
             loss = crit(logits.reshape(-1, logits.size(-1)), tgt_out.reshape(-1))
             opt.zero_grad()
@@ -80,26 +90,27 @@ def main():
             opt.step()
             total += loss.item() * src.size(0)
             n += src.size(0)
-        if ep % 10 == 0 or ep == 1:
-            print(f"epoch {ep:3d}  loss={total / n:.4f}")
+        if ep % eval_every == 0 or ep == 1:
+            h = translator.history
+            h["epoch"].append(ep)
+            h["loss"].append(total / n)
+            h["train_em"].append(exact_match(translator, train_pairs))
+            h["test_em"].append(exact_match(translator, test_pairs) if test_pairs else float("nan"))
+            if verbose:
+                print(f"epoch {ep:3d}  loss={h['loss'][-1]:.3f}  train EM={h['train_em'][-1]:.2f}"
+                      f"  held-out EM={h['test_em'][-1]:.2f}")
+    return translator
 
-    print("\n=== Autoregressive decode (greedy) ===")
-    model.eval()
-    demos = [
-        "hello",
-        "thank you",
-        "i love machine learning",
-        "where is the station",
-        "the cat is black",
-        "i speak french",
-        "neural networks are powerful",
-        "transformers changed nlp",
-    ]
-    for en in demos:
-        src = torch.tensor([encode(en, en_stoi, add_bos_eos=False)], device=device)
-        ids = model.generate(src, bos_id=fr_stoi[BOS], eos_id=fr_stoi[EOS])
-        print(f"EN: {en}")
-        print(f"FR: {decode(ids, fr_itos)}\n")
+
+def main():
+    train_pairs, test_pairs = train_test_split()
+    print(f"train={len(train_pairs)} pairs | held-out={len(test_pairs)} pairs")
+    translator = train(train_pairs, test_pairs)
+
+    print("\n=== Held-out sentences (never seen in training), greedy decoding ===")
+    for en, fr in test_pairs[:10]:
+        out = translator.translate(en)
+        print(f"{'ok ' if out == fr else 'err'}  {en:28s} → {out:28s} (ref: {fr})")
 
 
 if __name__ == "__main__":

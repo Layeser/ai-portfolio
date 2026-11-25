@@ -51,7 +51,7 @@ class Seq2SeqTransformer(nn.Module):
         dec_layer = nn.TransformerDecoderLayer(
             d_model, nhead, dim_ff, dropout, batch_first=True
         )
-        self.encoder = nn.TransformerEncoder(enc_layer, num_layers)
+        self.encoder = nn.TransformerEncoder(enc_layer, num_layers, enable_nested_tensor=False)
         self.decoder = nn.TransformerDecoder(dec_layer, num_layers)
         self.proj = nn.Linear(d_model, tgt_vocab)
 
@@ -77,6 +77,31 @@ class Seq2SeqTransformer(nn.Module):
             memory_key_padding_mask=self._pad_mask(src),
         )
         return self.proj(out)
+
+    @torch.no_grad()
+    def cross_attention(self, src: torch.Tensor, tgt_in: torch.Tensor, layer: int = -1) -> torch.Tensor:
+        """Cross-attention weights of one decoder layer, averaged over heads: (B, T, S), rows sum to 1.
+
+        nn.TransformerDecoderLayer asks its attention module for no weights; a pre-hook flips `need_weights` for this
+        call only, and a forward hook keeps them.
+        """
+        self.eval()
+        mha = self.decoder.layers[layer].multihead_attn
+        kept: list[torch.Tensor] = []
+
+        def want_weights(_module, args, kwargs):
+            return args, {**kwargs, "need_weights": True, "average_attn_weights": True}
+
+        def keep(_module, _args, output):
+            kept.append(output[1])
+
+        handles = [mha.register_forward_pre_hook(want_weights, with_kwargs=True), mha.register_forward_hook(keep)]
+        try:
+            self(src, tgt_in)
+        finally:
+            for h in handles:
+                h.remove()
+        return kept[0]
 
     @torch.no_grad()
     def generate(
