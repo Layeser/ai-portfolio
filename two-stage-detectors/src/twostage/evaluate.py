@@ -80,14 +80,16 @@ def voc_map(detections: dict, image_ids: list[str], iou_threshold: float = 0.5) 
 
 
 @torch.no_grad()
-def evaluate_model(model, split: str = "holdout", max_images: int = 0, device: str = "cuda", workers: int = 4) -> dict:
+def evaluate_model(model, split: str = "holdout", max_images: int = 0, device: str | None = None,
+                   workers: int = 4) -> dict:
+    device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     ids = split_ids(split)[: max_images or None]
     loader = DataLoader(VOCDetection(ids, train=False, proposals=model.needs_proposals), batch_size=1,
                         collate_fn=collate, num_workers=workers)
     model.eval()
     detections, start = defaultdict(list), time.time()
     for images, targets in loader:
-        with torch.autocast("cuda", dtype=torch.bfloat16, enabled=device == "cuda"):
+        with torch.autocast(device, dtype=torch.bfloat16, enabled=device == "cuda"):
             out = model([im.to(device) for im in images], [_to(t, device) for t in targets])
         for det, t in zip(out, targets, strict=True):
             boxes = (det["boxes"].float() / t["scale"]).cpu().numpy()
@@ -115,9 +117,10 @@ def main() -> None:
     parser.add_argument("--max-images", type=int, default=0)
     parser.add_argument("--output", default=None)
     args = parser.parse_args()
-    model = build(args.model).cuda()
-    model.load_state_dict(torch.load(args.weights, map_location="cuda")["model"])
-    result = evaluate_model(model, args.split, args.max_images)
+    device = "cuda" if torch.cuda.is_available() else "cpu"  # CPU works, about 10-30x slower
+    model = build(args.model).to(device)
+    model.load_state_dict(torch.load(args.weights, map_location=device)["model"])
+    result = evaluate_model(model, args.split, args.max_images, device)
     print(json.dumps({k: v for k, v in result.items() if k != "per_class_AP07"}, indent=2))
     output = args.output or ROOT / "reports" / f"eval_{args.model}_{args.split}.json"
     with open(output, "w") as f:

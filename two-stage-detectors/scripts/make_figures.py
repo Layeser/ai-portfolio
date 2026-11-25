@@ -68,14 +68,15 @@ def detections(model_name: str = "faster_rcnn", n: int = 6, conf: float = 0.5) -
     weights = ROOT / "checkpoints" / model_name / "best.pt"
     if not weights.exists():
         return
-    model = build(model_name, pretrained=False).cuda().eval()
-    model.load_state_dict(torch.load(weights, map_location="cuda")["model"])
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = build(model_name, pretrained=False).to(device).eval()
+    model.load_state_dict(torch.load(weights, map_location=device)["model"])
     ids = split_ids("test")[:n]  # first test images: not cherry-picked
     data = VOCDetection(ids, train=False, proposals=model.needs_proposals)
     fig, axes = plt.subplots(2, 3, figsize=(11, 7))
     for ax, (image, target) in zip(axes.flat, (data[i] for i in range(n)), strict=True):
-        with torch.autocast("cuda", dtype=torch.bfloat16):
-            det = model([image.cuda()], [_to(target, "cuda")])[0]
+        with torch.autocast(device, dtype=torch.bfloat16, enabled=device == "cuda"):
+            det = model([image.to(device)], [_to(target, device)])[0]
         ax.imshow(image.permute(1, 2, 0).numpy())
         for box, score, label in zip(det["boxes"].float().cpu(), det["scores"].float().cpu(), det["labels"].cpu(),
                                      strict=True):

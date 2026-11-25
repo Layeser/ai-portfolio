@@ -62,6 +62,8 @@ def main() -> None:
     random.seed(0)
     out = ROOT / args.out
 
+    if not torch.cuda.is_available():
+        raise SystemExit("LoRA training needs a CUDA GPU; inference and the API run on CPU (make download-weights)")
     tok = AutoTokenizer.from_pretrained(args.base)
     model = AutoModelForCausalLM.from_pretrained(args.base, dtype=torch.bfloat16).cuda()
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})

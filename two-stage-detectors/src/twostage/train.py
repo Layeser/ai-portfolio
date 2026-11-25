@@ -43,6 +43,8 @@ def main() -> None:
     lr, batch, epochs = args.lr or lr, args.batch or batch, args.epochs or epochs
 
     torch.manual_seed(0)
+    if not torch.cuda.is_available():
+        raise SystemExit("training needs a CUDA GPU; to use the models on CPU, run make download-weights and evaluate")
     device = "cuda"
     model = build(args.model).to(device)
     dataset = VOCDetection(split_ids("train"), train=True, proposals=model.needs_proposals)
