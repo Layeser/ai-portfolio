@@ -27,6 +27,9 @@ comparison isolates the detection design. The papers used VGG-16; ResNet-50 expl
 
 ## How each model works (and where it departs from the paper)
 
+The shared machinery (box offsets, matching, sampling, RoI pooling, anchors) and what the first stage hands to the
+second, measured: [docs/two_stage.md](docs/two_stage.md).
+
 **R-CNN** (`models.RCNN`)
 - Proposals: Selective Search "fast" mode, cached once (`scripts/selective_search.py`, ~1,400 boxes / image).
 - Each proposal is enlarged so that 16 px of context surround it once warped, then warped to 224×224 —
@@ -68,6 +71,7 @@ make proposals        # Selective Search for R-CNN and Fast R-CNN (~45 min on 8 
 make train-faster     # then train-fast, train-rcnn
 make evaluate         # VOC 2007 test mAP of the three best checkpoints -> reports/
 make figures
+python scripts/explainer_figures.py   # proposal recall and anchor coverage of docs/two_stage.md (CPU, ~20 s)
 make test             # 8 CPU tests on synthetic data: IoU, box coding, matching, mAP, anchors, train + inference
 ```
 

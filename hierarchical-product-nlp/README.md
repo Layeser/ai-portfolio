@@ -36,6 +36,22 @@ package with data validation, two models, hierarchical metrics, confidence-based
 * **Leakage checked.** 131 test products (1.7 %) share an exact title with a training product. Scores
   without them are identical (0.8693 vs 0.8691), so the test set is not inflated.
 
+## Why this method, and what it cannot do
+
+One classifier over the 100 leaves, with the tree used afterwards (hierarchical metric, deepest confident
+ancestor), rather than a cascade of classifiers down the tree: in a cascade, an error near the root cannot be
+recovered and deep nodes have few examples to learn from. TF-IDF with a linear SVM was kept over the transformer
+because it won on validation, at a fraction of the cost.
+
+It stops working when:
+
+* **the taxonomy changes**: a new leaf needs labelled products and retraining; nothing transfers to an unseen
+  category.
+* **the text says little** (a reference number and a brand, or a product described mostly by its image): character
+  n-grams have nothing to grip.
+* **the catalogue drifts** (new brands, new languages): the routing threshold was calibrated on validation and must be
+  re-checked on freshly labelled products before trusting the 95 % again.
+
 ## How it works
 
 ```mermaid

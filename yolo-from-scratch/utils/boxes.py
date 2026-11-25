@@ -22,7 +22,8 @@ def encode_boxes(
         image_size: input image side length
 
     Returns:
-        target (S, S, 5 + C) — one object per cell (first object wins on collision)
+        target (S, S, 5 + C) — one object per cell: when two centres fall in the same cell, the last one
+        overwrites the earlier ones (13.5 % of VOC 2007 test objects, see scripts/explainer_figures.py)
     """
     target = torch.zeros(grid_size, grid_size, 5 + num_classes)
     cell_size = image_size / grid_size

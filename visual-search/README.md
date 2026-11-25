@@ -39,6 +39,21 @@ through the API (decode, embed, search) on CPU.
 *SimCLR: six random test queries and their six nearest gallery images (blue = same class). The errors
 are understandable: animals on similar backgrounds, a cat confused with dogs.*
 
+## Why this method, and what it cannot do
+
+Nearest-neighbour search in an embedding space, rather than a classifier: a classifier only knows its fixed
+classes, while an embedding can rank any new image against the gallery, including images of classes never seen in
+training. The encoder decides what "similar" means; the index only makes the search fast.
+
+It stops working when:
+
+* **"similar" means a detail the encoder was not trained to see.** These encoders capture object category and shape;
+  a logo, a defect or a texture needs an encoder trained on that signal.
+* **queries and gallery come from different domains** (sketches against photos, night against day): distances across
+  the two are not comparable.
+* **near-duplicates must be told apart from same-class images**: class-level similarity, the metric used here, ranks
+  any cat close to any cat.
+
 ## Engineering notes
 
 * **Per-image augmentation on the GPU.** torchvision's batch transforms draw *one* random crop or

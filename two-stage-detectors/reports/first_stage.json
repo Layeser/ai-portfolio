@@ -1,0 +1,29 @@
+{
+  "images": 4952,
+  "objects_non_difficult": 12032,
+  "selective_search_proposals_per_image_median": 1407,
+  "selective_search_recall_iou05": {
+    "10": 0.067,
+    "30": 0.169,
+    "100": 0.406,
+    "300": 0.687,
+    "500": 0.797,
+    "1000": 0.893,
+    "2000": 0.939
+  },
+  "selective_search_recall_iou07": {
+    "10": 0.023,
+    "30": 0.063,
+    "100": 0.163,
+    "300": 0.329,
+    "500": 0.428,
+    "1000": 0.578,
+    "2000": 0.713
+  },
+  "anchors_best_iou_ge_07": 0.373,
+  "anchors_best_iou_ge_05": 0.806,
+  "anchors_best_iou_below_03": 0.1,
+  "anchors_best_iou_median": 0.639,
+  "median_side_px_objects_best_anchor_below_03": 54.7,
+  "median_side_px_all_objects": 227.1
+}

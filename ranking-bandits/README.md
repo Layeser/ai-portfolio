@@ -46,6 +46,21 @@ What the numbers say:
   forgot faster than it learned. Plain Thompson sampling re-adapted on its own: its regret after the shift
   was 460 against 577–613 for the discounted variants (5 seeds). Kept in the benchmark on purpose.
 
+## Why this method, and what it cannot do
+
+Bandits rather than a model trained offline on click logs: logs only show items that were displayed, so an
+offline model learns nothing about the others. A bandit chooses what to show *and* learns from it, paying a measured
+price for exploration (the regret above). The cascade model learns one estimate per item instead of one per list
+(100 items, but over 9 billion ordered top-5 lists), and reads each click as evidence about the items above it.
+
+It stops working when:
+
+* **users do not scan top-down** (grids, carousels, several clicks per visit): the update would read unseen items as
+  rejected.
+* **click rates depend on the user or the context**: these policies learn one ranking for everyone; personalisation
+  needs contextual bandits.
+* **the catalogue changes faster than evidence accumulates** (see Limitations).
+
 ## Serving API
 
 ```bash
@@ -61,6 +76,19 @@ curl -s localhost:8000/stats                                  # CTR, current bes
   rejected (404), and out-of-range positions return 422. A replayed callback cannot double-count a click.
 * The posterior is checkpointed to JSON, so a restart keeps what was learned.
 * Thread-safe updates (one lock around rank / update).
+
+## Limitations
+
+* **Simulated users only.** Click rates are drawn from a chosen distribution and users follow the cascade model
+  exactly, so the benchmark cannot show what a violation of the model would cost. A replay evaluation on real logs
+  would be the next check.
+* **Non-stationarity is not solved.** Discounted Thompson sampling, the textbook answer, lost to plain Thompson
+  sampling for every discount factor tried (the negative result above): with 1 to 5 observations per user and 100
+  items, forgetting discards evidence faster than it arrives. Change detection or a sliding window over a smaller
+  candidate set are untested alternatives.
+* **One ranking for everyone.** No user or item features, no position effects beyond the cascade.
+* **One process.** The posterior lives in memory behind a lock, with a JSON checkpoint; several replicas would need a
+  shared store and a merge rule for concurrent updates.
 
 ## Run it
 

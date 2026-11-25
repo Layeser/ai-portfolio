@@ -60,6 +60,21 @@ confirmed on the evaluation period (0.555 vs 0.561).
 
 ![levels](reports/figures/levels.png)
 
+## Why this method, and what it cannot do
+
+Global models over all series rather than one model per series (ARIMA, exponential smoothing): 30,490 local
+models would each fit a short, mostly-zero history, while a global model shares what it learns across series (a
+holiday effect, a price cut). Lags of at least 28 days let one model forecast the whole horizon directly, without
+feeding its own errors back.
+
+It stops working when:
+
+* **the future has no past**: a new product has no lags, and a shock outside anything the features describe (a store
+  closure, a pandemic) is invisible to both models.
+* **decisions need uncertainty**: these are point forecasts, while stock decisions need quantiles of demand.
+* **the horizon exceeds the shortest lag**: beyond 28 days, the lag features must be rebuilt or forecasts fed back
+  recursively.
+
 ## Run it
 
 ```bash

@@ -47,7 +47,9 @@ explicit refusal when the documents do not contain the answer.
 
 | Project | What it shows | Key result |
 |---|---|---|
-| [ml-from-scratch](./ml-from-scratch/) | Classical ML, VAE, ResNet and an EN→FR Transformer implemented from the maths, **verified against scikit-learn** | 13 tests, matches sklearn |
+| [ml-from-scratch](./ml-from-scratch/) | Classical ML, VAE, ResNet and an EN→FR Transformer implemented from the maths, **verified against scikit-learn** | 42 tests, matches sklearn |
+
+The from-scratch projects ship one-page explainers anchored in their code and measured figures: [ml-from-scratch](./ml-from-scratch/docs/README.md) (12 models), [YOLOv1](./yolo-from-scratch/docs/yolov1.md), [two-stage detectors](./two-stage-detectors/docs/two_stage.md).
 
 ## LLM & agents
 

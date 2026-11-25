@@ -58,6 +58,22 @@ serves one request at a time.
   On a real project the next step would be to compare with a larger model prompted with a few examples,
   on cost and latency as well as accuracy.
 
+## Why this method, and what it cannot do
+
+LoRA on a small model: full fine-tuning of 1.5 B parameters, with its optimiser state, does not fit an 8 GB GPU,
+while LoRA trains 1.2 % of the weights and is merged into the base model for serving, so inference costs nothing
+extra. A text model rather than an image model (Donut-style), because the task studied here is structuring the
+content, not reading it.
+
+It stops working when:
+
+* **the input is real OCR output**: the text here is rebuilt from annotated words, so OCR errors were never seen in
+  training.
+* **the schema changes**: the behaviour learned is tied to the training schema; new fields need new examples and a
+  new adapter.
+* **an exact value matters more than the structure**: a number can be copied wrongly and nothing checks it; totals
+  should be cross-checked (sum of items, tax) before use.
+
 ## Run it
 
 ```bash

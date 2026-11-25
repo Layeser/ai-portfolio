@@ -23,6 +23,22 @@ Current time in Japan: 2026-11-22 09:49 (Asia/Tokyo)
   is now plain functions with tests for DST, multi-zone countries, aliases and error cases. One optional
   test runs the agent end to end and checks that it actually called the tools.
 
+## Why this method, and what it cannot do
+
+A tool-calling agent because a language model has no clock and is unreliable at arithmetic: tools return exact
+answers, and the model only decides which tool to call and with which arguments. LangChain's `create_agent` is the
+shortest path to that loop; for a fixed sequence of steps, a plain function chain would be simpler and more
+predictable.
+
+It stops working when:
+
+* **the model picks the wrong tool or invents arguments**: the tools validate their inputs, but nothing checks the
+  plan itself.
+* **tasks need many steps**: each step is another model call, so latency and the chance of a wrong turn grow with the
+  length of the task.
+* **tools have side effects**: this demo only reads; actions (payments, emails) need confirmation and permission
+  checks.
+
 ## Run
 
 ```bash

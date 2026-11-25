@@ -26,6 +26,21 @@ semantic and judge-based metrics are needed. The ~30 % relative gain in judge sc
 references**: the heuristic often picked a long, chatty comment rather than the answer itself. Caveat: the
 LLM run covers 823 riddles instead of 1,000, so the two samples are not identical.
 
+## Why this method, and what it cannot do
+
+An LLM to extract the reference answer, rather than the top-voted comment: on Reddit the votes reward jokes and
+long replies as much as answers, while an LLM reading the thread can pick the answer and state it briefly. Semantic
+and judge-based metrics replace exact match because riddle answers are phrased freely.
+
+It stops working when:
+
+* **the same kind of model extracts, answers and judges**: shared biases inflate the scores; a human-labelled sample
+  is the check, and it was not done here.
+* **a thread has no answer, or several valid ones**: extraction still returns something plausible rather than
+  nothing.
+* **results must be reproduced later**: hosted models change over time, so the same calls may not give the same
+  scores.
+
 ## Files
 
 | Path | Role |

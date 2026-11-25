@@ -8,6 +8,9 @@ The interesting part is the debugging. The first version trained without errors 
 **mAP of 0.0002**. Three silent bugs were found one at a time with targeted diagnostics. The final
 model reaches **0.235 mAP@0.5 on the full VOC 2007 test set** (4,952 images).
 
+How the model works, from the output tensor to the loss and the limits of the 7×7 grid:
+[docs/yolov1.md](docs/yolov1.md).
+
 ![training](reports/figures/training.png)
 
 ## Results
@@ -61,6 +64,7 @@ make train              # 25 epochs (config/train.yaml)
 make evaluate           # VOC 2007 test mAP@0.5 -> reports/eval_voc2007_test.json
 make export-weights     # fp16 checkpoint + release/ + weights.sha256
 python scripts/make_figures.py
+python scripts/explainer_figures.py   # grid-collision figure of docs/yolov1.md (CPU, ~20 s)
 make test               # 17 tests: boxes, loss stability, resume, evaluation, export, weights, API
 ```
 
