@@ -74,11 +74,11 @@ pytest tests -q
 
 | Algorithm | Dataset | Run | Notes |
 |-----------|---------|-----|-------|
-| Linear regression | `make_regression` | `python -m mlscratch.classical.linear_regression` | — |
-| Logistic regression | `make_classification` | `python -m mlscratch.classical.logistic_regression` | — |
-| k-NN | Iris | `python -m mlscratch.classical.knn` | — |
-| Gaussian Naive Bayes | Iris | `python -m mlscratch.classical.naive_bayes` | — |
-| Decision tree (CART, Gini) | Iris | `python -m mlscratch.classical.decision_tree` | — |
+| Linear regression | `make_regression` | `python -m mlscratch.classical.linear_regression` | [page](docs/linear_regression.md) |
+| Logistic regression | `make_classification` | `python -m mlscratch.classical.logistic_regression` | [page](docs/logistic_regression.md) |
+| k-NN | Iris | `python -m mlscratch.classical.knn` | [page](docs/knn.md) |
+| Gaussian Naive Bayes | Iris | `python -m mlscratch.classical.naive_bayes` | [page](docs/naive_bayes.md) |
+| Decision tree (CART, Gini) | Iris | `python -m mlscratch.classical.decision_tree` | [page](docs/decision_tree.md) |
 | k-Means | blobs | `python -m mlscratch.classical.kmeans` | [page](docs/kmeans.md) |
 | PCA | Iris (2D viz) | `python -m mlscratch.classical.pca` | [page](docs/pca.md) |
 
