@@ -69,7 +69,9 @@ run in CI) compares every classical model with its scikit-learn reference, with 
 
 ```bash
 pip install -r requirements.txt
-pytest tests -q
+python -m pytest -q                                          # all tests
+python -m pytest -q tests/test_against_sklearn.py            # only the comparisons with scikit-learn
+python -m pytest -v tests/test_against_sklearn.py -k pca     # one model, with details
 ```
 
 ## Classical ML (NumPy)

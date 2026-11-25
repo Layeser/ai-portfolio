@@ -83,6 +83,21 @@ the same layout, and each can be split into its own repository:
 └── reports/          figures and metrics produced by the code, versioned as evidence
 ```
 
+### Run the tests
+
+From the folder of the project you want, after `pip install -r requirements.txt`. For example, for ml-from-scratch:
+
+```bash
+cd ml-from-scratch
+python -m pytest -q                                          # every test of the project
+python -m pytest -q tests/test_against_sklearn.py            # one file
+python -m pytest -v tests/test_against_sklearn.py -k pca     # tests whose name contains "pca", with details
+```
+
+Use `python -m pytest` (or `make test`), not `python -m tests.<file>`: each project's `pytest.ini` puts `src/` on the
+path, which a plain `python -m` run does not do. On a machine whose GPU setup is broken, `CUDA_VISIBLE_DEVICES=""`
+in front of the command runs the PyTorch tests on CPU.
+
 * **CI**: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) tests every project in its own job.
 * **Trained weights**: small models are versioned (FraudGuard); larger ones are attached to GitHub Releases with
   SHA-256 checksums (`make download-weights`), so every model can be used without retraining.
