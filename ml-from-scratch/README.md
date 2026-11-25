@@ -5,6 +5,9 @@ NumPy for classical ML. PyTorch only where tensors / autograd earn their keep.
 
 Inspired by the teaching style of [Andrej Karpathy](https://karpathy.ai/) — small models, clear math, runnable demos.
 
+Each algorithm gets a one-page note in [`docs/`](docs/README.md): the maths as implemented, where it breaks (with
+measured figures), and the gap with a production library.
+
 ## Philosophy
 
 1. **Own the math** — every update rule is written out (gradients, EM-style steps, ELBO, attention masks).
@@ -42,6 +45,12 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && export PYTHONPATH=src
 ```
 
+## Teaching figures
+
+```bash
+PYTHONPATH=src python scripts/make_figures.py   # regenerates figures/<algo>/*.png and measurements.json, deterministic, a few seconds on CPU
+```
+
 ## Correctness: checked against scikit-learn
 
 Writing an algorithm from the maths only counts if it gives the right answer. `tests/` (13 tests, ~15 s on CPU,
@@ -63,26 +72,26 @@ pytest tests -q
 
 ## Classical ML (NumPy)
 
-| Algorithm | Dataset | Run |
-|-----------|---------|-----|
-| Linear regression | `make_regression` | `python -m mlscratch.classical.linear_regression` |
-| Logistic regression | `make_classification` | `python -m mlscratch.classical.logistic_regression` |
-| k-NN | Iris | `python -m mlscratch.classical.knn` |
-| Gaussian Naive Bayes | Iris | `python -m mlscratch.classical.naive_bayes` |
-| Decision tree (CART, Gini) | Iris | `python -m mlscratch.classical.decision_tree` |
-| k-Means | blobs | `python -m mlscratch.classical.kmeans` |
-| PCA | Iris (2D viz) | `python -m mlscratch.classical.pca` |
+| Algorithm | Dataset | Run | Notes |
+|-----------|---------|-----|-------|
+| Linear regression | `make_regression` | `python -m mlscratch.classical.linear_regression` | — |
+| Logistic regression | `make_classification` | `python -m mlscratch.classical.logistic_regression` | — |
+| k-NN | Iris | `python -m mlscratch.classical.knn` | — |
+| Gaussian Naive Bayes | Iris | `python -m mlscratch.classical.naive_bayes` | — |
+| Decision tree (CART, Gini) | Iris | `python -m mlscratch.classical.decision_tree` | — |
+| k-Means | blobs | `python -m mlscratch.classical.kmeans` | [page](docs/kmeans.md) |
+| PCA | Iris (2D viz) | `python -m mlscratch.classical.pca` | [page](docs/pca.md) |
 
 Plots land in `outputs/<algo>/`.
 
 ## Deep Learning (PyTorch)
 
-| Model | Task | Run |
-|-------|------|-----|
-| Autoencoder | MNIST reconstruction | `python -m mlscratch.deep_learning.autoencoder` |
-| VAE | MNIST + latent walk | `python -m mlscratch.deep_learning.vae` |
-| LeNet-5 | MNIST classification | `python -m mlscratch.deep_learning.lenet` |
-| ResNet-18 (CIFAR variant) | CIFAR-10 | `python -m mlscratch.deep_learning.resnet` |
+| Model | Task | Run | Notes |
+|-------|------|-----|-------|
+| Autoencoder | MNIST reconstruction | `python -m mlscratch.deep_learning.autoencoder` | — |
+| VAE | MNIST + latent walk | `python -m mlscratch.deep_learning.vae` | — |
+| LeNet-5 | MNIST classification | `python -m mlscratch.deep_learning.lenet` | — |
+| ResNet-18 (CIFAR variant) | CIFAR-10 | `python -m mlscratch.deep_learning.resnet` | — |
 
 First run downloads MNIST / CIFAR via `torchvision` into `./data` (gitignored).
 

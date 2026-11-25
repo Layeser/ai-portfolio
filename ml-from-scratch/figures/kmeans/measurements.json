@@ -1,0 +1,20 @@
+{
+  "blobs_ari": 0.9536,
+  "moons_ari": 0.2738,
+  "init_reference_inertia": 1136.8,
+  "init_random_1_share_more_than_1pct_worse": 0.95,
+  "init_random_1_median_over_reference": 1.634,
+  "init_random_1_worst_over_reference": 4.89,
+  "init_kmeanspp_1_share_more_than_1pct_worse": 0.66,
+  "init_kmeanspp_1_median_over_reference": 1.137,
+  "init_kmeanspp_1_worst_over_reference": 2.13,
+  "init_kmeanspp_10_share_more_than_1pct_worse": 0.04,
+  "init_kmeanspp_10_median_over_reference": 1.0,
+  "init_kmeanspp_10_worst_over_reference": 1.13,
+  "init_sklearn_random_1_share_more_than_1pct_worse": 0.94,
+  "init_sklearn_random_1_median_over_reference": 1.626,
+  "init_sklearn_random_1_worst_over_reference": 4.91,
+  "init_sklearn_kmeanspp_1_share_more_than_1pct_worse": 0.35,
+  "init_sklearn_kmeanspp_1_median_over_reference": 1.0,
+  "init_sklearn_kmeanspp_1_worst_over_reference": 1.64
+}

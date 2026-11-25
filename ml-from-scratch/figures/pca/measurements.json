@@ -1,0 +1,17 @@
+{
+  "iris_ratio_pc1_pc2": [
+    0.9246,
+    0.0531
+  ],
+  "wine_raw_ratio_pc1": 0.9981,
+  "wine_raw_pc1_top_feature": "proline",
+  "wine_raw_pc1_top_loading": 0.9998,
+  "wine_scaled_ratio_pc1_pc2": [
+    0.362,
+    0.1921
+  ],
+  "wine_proline_std": 314.9,
+  "wine_hue_std": 0.229,
+  "circles_ratio_pc1": 0.5035,
+  "circles_best_threshold_accuracy_on_pc1": 0.67
+}
